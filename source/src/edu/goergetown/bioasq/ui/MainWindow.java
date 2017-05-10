@@ -1,6 +1,7 @@
 package edu.goergetown.bioasq.ui;
 
 import edu.goergetown.bioasq.core.ITask;
+import edu.goergetown.bioasq.tasks.preprocess.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,19 +15,7 @@ public class MainWindow implements ITaskListener {
     private final static double COEF = 2.2;
 
     private void initTasks() {
-//        tasks.add(new ExtractAllPapersInYearsTask());
-//        tasks.add(new ExtractTrainingVocabularyTask());
-//        tasks.add(new FilterVocabularyTask());
-//        tasks.add(new FindClassesTask());
-//        tasks.add(new VocabularyClassesMatrixCreatorTask());
-//        tasks.add(new ClassDocumentListCreatorTask());
-//        tasks.add(new CreateTresholdMeshTrainingTask());
-//        tasks.add(new TestMeshClassificationTask(2014));
-//        tasks.add(new MeshSimilarityToParentFinderTask());
-//        tasks.add(new ExtractLabelVectorsTask());
-//        tasks.add(new LabelVectorFinalizerTask());
-//        tasks.add(new CreateMeshLabelWeightFilesTask());
-//        tasks.add(new TestMeshClassificationWithLabelClusterTask());
+        tasks.add(new ExtractDatasetOnPaperYearTask());
     }
 
     private static final Font FONT = new Font("Segoe UI", Font.PLAIN, c(14));
@@ -70,7 +59,7 @@ public class MainWindow implements ITaskListener {
         logContainer = new JScrollPane(txtLog);
         logContainer.setSize(c(1024 - 35), c(768 - 4*15 - 20 - 25 - 35));
         logContainer.setLocation(c(15),c(55));
-        txtLog.setFont(new Font("Courier New", Font.PLAIN, c(15)));
+        txtLog.setFont(new Font("Consolas", Font.PLAIN, c(15)));
 
 
         cmdRun.setText("Run Task");
