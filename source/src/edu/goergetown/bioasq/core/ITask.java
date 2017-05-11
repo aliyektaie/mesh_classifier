@@ -9,4 +9,6 @@ public interface ITask {
     String getTitle();
 
     void process(ITaskListener listener);
+
+    int getEstimatedTimeInMinutes();
 }

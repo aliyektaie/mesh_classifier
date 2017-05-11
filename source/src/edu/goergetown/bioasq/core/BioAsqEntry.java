@@ -33,7 +33,7 @@ public class BioAsqEntry {
         FileUtils.writeText(path, json);
     }
 
-    private String serialize() {
+    public String serialize() {
         StringBuilder result = new StringBuilder();
 
         result.append(String.format("%s ---> %s", "journal", journal));

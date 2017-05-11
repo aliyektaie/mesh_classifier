@@ -1,6 +1,7 @@
 package edu.goergetown.bioasq.utils;
 
 import java.io.*;
+import java.util.ArrayList;
 
 /**
  * Created by yektaie on 2/26/17.
@@ -83,5 +84,31 @@ public class FileUtils {
         } catch (Exception e) {
 //            Logger.error(e, "Unable to create folder at \"%s\"", path);
         }
+    }
+
+    public static ArrayList<String> getDirectories(String path) {
+        File f = new File(path);
+        ArrayList<String> result = new ArrayList<>();
+
+        for (File file : f.listFiles()) {
+            if (file.isDirectory()) {
+                result.add(file.getAbsolutePath());
+            }
+        }
+
+        return result;
+    }
+
+    public static ArrayList<String> getFiles(String path) {
+        File f = new File(path);
+        ArrayList<String> result = new ArrayList<>();
+
+        for (File file : f.listFiles()) {
+            if (file.isFile()) {
+                result.add(file.getAbsolutePath());
+            }
+        }
+
+        return result;
     }
 }

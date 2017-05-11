@@ -4,12 +4,11 @@ import com.google.gson.Gson;
 import edu.goergetown.bioasq.Constants;
 import edu.goergetown.bioasq.core.BaseTask;
 import edu.goergetown.bioasq.core.BioAsqEntry;
+import edu.goergetown.bioasq.core.SubTaskInfo;
 import edu.goergetown.bioasq.ui.ITaskListener;
 import edu.goergetown.bioasq.utils.FileUtils;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
@@ -17,17 +16,22 @@ import java.util.Hashtable;
  * Created by Yektaie on 5/10/2017.
  */
 public class ExtractDatasetOnPaperYearTask extends BaseTask {
+    private SubTaskInfo EXTRACTION_TASK = new SubTaskInfo("Extraction from original file", 17);
+    private SubTaskInfo MERGING_TASK = new SubTaskInfo("Merging intermediate temp files", 5);
+
     @Override
     public void process(ITaskListener listener) {
         final int countOfDocuments = 12834585;
         listener.setCurrentState("Loading mesh JSON file");
-        Hashtable<Integer, Integer> lastIndex = new Hashtable<>();
+        Hashtable<Integer, ArrayList<BioAsqEntry>> entries = new Hashtable<>();
+        int count = 0;
+        int countForMerge = 10000;
 
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(Constants.ORIGINAL_DATA_FILE), "UTF8"));
 
             String line = null;
-            int count = 0;
+
             while ((line = br.readLine()) != null) {
                 if (line.startsWith("{\"journal")) {
                     if (line.endsWith("}]}")) {
@@ -38,13 +42,27 @@ public class ExtractDatasetOnPaperYearTask extends BaseTask {
 
                     Gson gson = new Gson();
                     BioAsqEntry entry = gson.fromJson(line, BioAsqEntry.class);
-                    entry.save(getFilePath(entry, lastIndex));
+                    if (entries.containsKey(entry.year)) {
+                        entries.get(entry.year).add(entry);
+                    } else {
+                        ArrayList<BioAsqEntry> list = new ArrayList<>();
+                        list.add(entry);
+
+                        entries.put(entry.year, list);
+                    }
 
                     if (count % 1000 == 0) {
-                        listener.setProgress(count, countOfDocuments);
+                        updateProgress(listener, EXTRACTION_TASK, count, countOfDocuments);
                     }
 
                     count++;
+
+                    if (count % countForMerge == 0) {
+                        saveEntries(entries, count / countForMerge);
+                        entries.clear();
+
+//                        listener.log("Entries saved ...");
+                    }
                 }
             }
 
@@ -53,34 +71,64 @@ public class ExtractDatasetOnPaperYearTask extends BaseTask {
             e.printStackTrace();
         }
 
+        saveEntries(entries, count / countForMerge);
+        mergeEntries(listener);
     }
 
-    private String getFilePath(BioAsqEntry entry, Hashtable<Integer, Integer> lastIndex) {
-        int index = 0;
+    private void mergeEntries(ITaskListener listener) {
+        listener.log("Start merging sub files");
+        ArrayList<String> directories = FileUtils.getDirectories(Constants.DATA_FOLDER_BY_YEAR);
+        int i = 0;
+        for (String folder : directories) {
+            updateProgress(listener, MERGING_TASK, i, directories.size());
+            mergeEntries(folder);
 
-        if (lastIndex.containsKey(entry.year)) {
-            index = lastIndex.get(entry.year) + 1;
+            i++;
+        }
+    }
 
-            if (index % Constants.NUMBER_OF_FILE_IN_DATASET_FOLDER == 0) {
-                String path = String.format("%s%s%s",Constants.getDataFolder(entry.year),String.valueOf(index / Constants.NUMBER_OF_FILE_IN_DATASET_FOLDER),Constants.BACK_SLASH);
+    private void mergeEntries(String folder) {
+        String year = folder.substring(folder.lastIndexOf("\\") + 1);
+        ArrayList<String> files = FileUtils.getFiles(folder);
 
-                if (!FileUtils.exists(path)) {
-                    FileUtils.createDirectory(path);
-                }
+        File file = new File(Constants.DATA_FOLDER_BY_YEAR + year + ".txt");
+
+        try {
+            FileOutputStream fs = new FileOutputStream(file);
+
+            for (String path: files) {
+                fs.write(FileUtils.readTextFile(path).getBytes("utf8"));
+                FileUtils.delete(path);
             }
 
-            lastIndex.put(entry.year, index);
-        } else {
-            String path = String.format("%s%s%s",Constants.getDataFolder(entry.year),"0",Constants.BACK_SLASH);
+            fs.flush();
+            fs.close();
+        } catch (Exception e) {
 
-            if (!FileUtils.exists(path)) {
-                FileUtils.createDirectory(path);
-            }
-
-            lastIndex.put(entry.year, 0);
         }
 
-        return String.format("%s%s%s%d%s",Constants.getDataFolder(entry.year),String.valueOf(index / Constants.NUMBER_OF_FILE_IN_DATASET_FOLDER),Constants.BACK_SLASH, index, ".txt");
+        FileUtils.delete(folder);
+    }
+
+    private void saveEntries(Hashtable<Integer, ArrayList<BioAsqEntry>> entries, int index) {
+        for (int key : entries.keySet()) {
+            ArrayList<BioAsqEntry> list = entries.get(key);
+            StringBuilder file = new StringBuilder();
+
+            for (BioAsqEntry entry : list) {
+                file.append(entry.serialize());
+                file.append("\n----------------------------------\n");
+            }
+
+            if (!FileUtils.exists(Constants.getDataFolder(key))) {
+                FileUtils.createDirectory(Constants.getDataFolder(key));
+            }
+
+            String path = String.format("%sentries-%d.txt", Constants.getDataFolder(key), index);
+            FileUtils.writeText(path, file.toString());
+        }
+
+        entries.clear();
     }
 
     @Override
@@ -91,5 +139,15 @@ public class ExtractDatasetOnPaperYearTask extends BaseTask {
     @Override
     protected String getTaskTitle() {
         return "Extract Papers Based on Publication Year";
+    }
+
+    @Override
+    protected ArrayList<SubTaskInfo> getSubTasks() {
+        ArrayList<SubTaskInfo> result = new ArrayList<>();
+
+        result.add(EXTRACTION_TASK);
+        result.add(MERGING_TASK);
+
+        return result;
     }
 }
