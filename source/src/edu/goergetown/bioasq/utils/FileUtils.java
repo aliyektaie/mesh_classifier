@@ -111,4 +111,43 @@ public class FileUtils {
 
         return result;
     }
+
+    public static void writeBinary(String path, byte[] data) {
+        File file = new File(path);
+        try {
+            FileOutputStream fs = new FileOutputStream(file);
+            fs.write(data);
+            fs.flush();
+            fs.close();
+        } catch (Exception e) {
+//            Logger.error(e, "Unable to write file at path \"%s\".", path);
+        }
+    }
+
+    public static byte[] readByteArray(FileInputStream inputFile, int length) throws IOException {
+        byte[] data = new byte[length];
+        inputFile.read(data);
+
+        return data;
+    }
+
+    public static int readInteger(FileInputStream inputFile) throws IOException {
+        byte[] data = new byte[4];
+        inputFile.read(data);
+
+        BinaryBuffer buffer = new BinaryBuffer(data);
+        return buffer.readInt();
+    }
+
+    public static int getFileLength(String path) {
+        int result = 0;
+        try {
+            FileInputStream fs = new FileInputStream(new File(path));
+            result = fs.available();
+            fs.close();
+        } catch (Exception e) {
+        }
+
+        return result;
+    }
 }

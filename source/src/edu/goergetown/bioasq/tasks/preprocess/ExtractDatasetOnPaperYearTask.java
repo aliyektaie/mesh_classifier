@@ -2,9 +2,8 @@ package edu.goergetown.bioasq.tasks.preprocess;
 
 import com.google.gson.Gson;
 import edu.goergetown.bioasq.Constants;
-import edu.goergetown.bioasq.core.BaseTask;
-import edu.goergetown.bioasq.core.BioAsqEntry;
-import edu.goergetown.bioasq.core.SubTaskInfo;
+import edu.goergetown.bioasq.core.document.BioAsqEntry;
+import edu.goergetown.bioasq.core.task.*;
 import edu.goergetown.bioasq.ui.ITaskListener;
 import edu.goergetown.bioasq.utils.FileUtils;
 
@@ -16,8 +15,8 @@ import java.util.Hashtable;
  * Created by Yektaie on 5/10/2017.
  */
 public class ExtractDatasetOnPaperYearTask extends BaseTask {
-    private SubTaskInfo EXTRACTION_TASK = new SubTaskInfo("Extraction from original file", 17);
-    private SubTaskInfo MERGING_TASK = new SubTaskInfo("Merging intermediate temp files", 5);
+    private SubTaskInfo EXTRACTION_TASK = new SubTaskInfo("Extraction from original file", 12);
+//    private SubTaskInfo MERGING_TASK = new SubTaskInfo("Merging intermediate temp files", 5);
 
     @Override
     public void process(ITaskListener listener) {
@@ -72,42 +71,7 @@ public class ExtractDatasetOnPaperYearTask extends BaseTask {
         }
 
         saveEntries(entries, count / countForMerge);
-        mergeEntries(listener);
-    }
-
-    private void mergeEntries(ITaskListener listener) {
-        listener.log("Start merging sub files");
-        ArrayList<String> directories = FileUtils.getDirectories(Constants.DATA_FOLDER_BY_YEAR);
-        int i = 0;
-        for (String folder : directories) {
-            updateProgress(listener, MERGING_TASK, i, directories.size());
-            mergeEntries(folder);
-
-            i++;
-        }
-    }
-
-    private void mergeEntries(String folder) {
-        String year = folder.substring(folder.lastIndexOf("\\") + 1);
-        ArrayList<String> files = FileUtils.getFiles(folder);
-
-        File file = new File(Constants.DATA_FOLDER_BY_YEAR + year + ".txt");
-
-        try {
-            FileOutputStream fs = new FileOutputStream(file);
-
-            for (String path: files) {
-                fs.write(FileUtils.readTextFile(path).getBytes("utf8"));
-                FileUtils.delete(path);
-            }
-
-            fs.flush();
-            fs.close();
-        } catch (Exception e) {
-
-        }
-
-        FileUtils.delete(folder);
+//        mergeEntries(listener);
     }
 
     private void saveEntries(Hashtable<Integer, ArrayList<BioAsqEntry>> entries, int index) {
@@ -146,7 +110,7 @@ public class ExtractDatasetOnPaperYearTask extends BaseTask {
         ArrayList<SubTaskInfo> result = new ArrayList<>();
 
         result.add(EXTRACTION_TASK);
-        result.add(MERGING_TASK);
+//        result.add(MERGING_TASK);
 
         return result;
     }

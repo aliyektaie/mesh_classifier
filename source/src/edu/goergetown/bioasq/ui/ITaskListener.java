@@ -9,4 +9,6 @@ public interface ITaskListener {
     void setProgress(int value, int max);
 
     void log(String entry);
+
+    void saveLogs(String path);
 }

@@ -1,12 +1,14 @@
-import edu.goergetown.bioasq.ui.MainWindow;
-
 import javax.swing.*;
+
+import edu.goergetown.bioasq.Constants;
+import edu.goergetown.bioasq.ui.MainWindow;
 
 /**
  * Created by Yektaie on 5/10/2017.
  */
 public class Program {
     public static void main(String[] args) {
+        Constants.initialize();
         setupLookAndFeel();
 
         JFrame window = new JFrame("Health Search & Mining Project");

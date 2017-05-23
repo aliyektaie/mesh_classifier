@@ -1,7 +1,9 @@
 package edu.goergetown.bioasq.ui;
 
-import edu.goergetown.bioasq.core.ITask;
+import edu.goergetown.bioasq.core.task.ITask;
 import edu.goergetown.bioasq.tasks.preprocess.*;
+import edu.goergetown.bioasq.tasks.train.*;
+import edu.goergetown.bioasq.utils.FileUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,19 +15,29 @@ import java.util.ArrayList;
  */
 public class MainWindow implements ITaskListener {
     private final static double COEF = 2.2;
+    private boolean enableParameterCallback = false;
 
     private void initTasks() {
         tasks.add(new ExtractDatasetOnPaperYearTask());
+        tasks.add(new CreateDatasetMergeTask());
+        tasks.add(new PartOfSpeechTaggerTask());
+        tasks.add(new DocumentFeatureExtractorTask());
+        tasks.add(new CreateMeSHProbabilityDistributionTask());
+//        tasks.add(new ClusterMeSHesTask());
+//        tasks.add(new HierarchicalAgglomerativeClusteringTask());
+        tasks.add(new AdaptiveMeSHListClustererTask());
     }
 
-    private static final Font FONT = new Font("Segoe UI", Font.PLAIN, c(14));
+    private static final Font FONT = new Font("Nato Sans 10", Font.PLAIN, c(14));
     public JPanel mainPanel;
 
     private ArrayList<ITask> tasks = new ArrayList<>();
 
     private JLabel lblSelectTask = new JLabel();
+    private JLabel lblSelectTaskParameters = new JLabel();
     private JLabel lblProgress = new JLabel();
     private JComboBox cmbTasks = new JComboBox();
+    private JComboBox cmbTaskParameters = new JComboBox();
     private JButton cmdRun = new JButton();
     private JTextArea txtLog = new JTextArea();
     private JScrollPane logContainer = null;
@@ -46,9 +58,51 @@ public class MainWindow implements ITaskListener {
         lblSelectTask.setLocation(c(15),c(15));
         lblSelectTask.setFont(FONT);
 
+        lblSelectTaskParameters.setText("Select Task Parameter:");
+        lblSelectTaskParameters.setSize(c(200), c(25));
+        lblSelectTaskParameters.setLocation(c(15),c(55));
+        lblSelectTaskParameters.setFont(FONT);
+
         cmbTasks.setSize(c(804), c(25));
-        cmbTasks.setLocation(c(200),c(15));
+        cmbTasks.setLocation(c(200),c(12));
         cmbTasks.setFont(FONT);
+
+        cmbTasks.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                ITask task = (ITask) cmbTasks.getSelectedItem();
+                cmbTaskParameters.removeAllItems();
+                cmbTaskParameters.setEnabled(task.getParameters() != null);
+
+                if (task.getParameters() != null) {
+                    String key = (String) task.getParameters().keySet().toArray()[0];
+                    ArrayList<Object> values = task.getParameters().get(key);
+                    cmbTaskParameters.setName(key);
+
+                    enableParameterCallback = false;
+                    for (Object value : values) {
+                        cmbTaskParameters.addItem(value);
+                    }
+                    enableParameterCallback = true;
+
+                    cmbTaskParameters.setSelectedItem(task.getParameter(key));
+                }
+            }
+        });
+
+        cmbTaskParameters.setSize(c(804), c(25));
+        cmbTaskParameters.setLocation(c(200),c(52));
+        cmbTaskParameters.setFont(FONT);
+
+        cmbTaskParameters.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                if (enableParameterCallback) {
+                    ITask task = (ITask) cmbTasks.getSelectedItem();
+                    task.setParameter(cmbTaskParameters.getName(), cmbTaskParameters.getSelectedItem());
+                }
+            }
+        });
 
         for (ITask task : tasks) {
             cmbTasks.addItem(task);
@@ -57,9 +111,9 @@ public class MainWindow implements ITaskListener {
         cmbTasks.setSelectedIndex(cmbTasks.getItemCount() - 1);
 
         logContainer = new JScrollPane(txtLog);
-        logContainer.setSize(c(1024 - 35), c(768 - 4*15 - 20 - 25 - 35));
-        logContainer.setLocation(c(15),c(55));
-        txtLog.setFont(new Font("Consolas", Font.PLAIN, c(15)));
+        logContainer.setSize(c(1024 - 35), c(768 - 4*15 - 20 - 25 - 35 - 45));
+        logContainer.setLocation(c(15),c(90));
+        txtLog.setFont(new Font("Courier 10 Pitch", Font.PLAIN, c(15)));
 
 
         cmdRun.setText("Run Task");
@@ -76,7 +130,9 @@ public class MainWindow implements ITaskListener {
         lblProgress.setFont(FONT);
 
         mainPanel.add(lblSelectTask);
+        mainPanel.add(lblSelectTaskParameters);
         mainPanel.add(cmbTasks);
+        mainPanel.add(cmbTaskParameters);
         mainPanel.add(cmdRun);
         mainPanel.add(logContainer);
         mainPanel.add(progress);
@@ -204,6 +260,11 @@ public class MainWindow implements ITaskListener {
 
         JScrollBar vertical = logContainer.getVerticalScrollBar();
         vertical.setValue( vertical.getMaximum() );
+    }
+
+    @Override
+    public void saveLogs(String path) {
+        FileUtils.writeText(path, txtLog.getText());
     }
 
     public static int c(int value) {
