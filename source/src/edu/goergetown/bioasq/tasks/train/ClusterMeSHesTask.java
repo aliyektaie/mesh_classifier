@@ -4,6 +4,7 @@ import edu.goergetown.bioasq.Constants;
 import edu.goergetown.bioasq.core.document.*;
 import edu.goergetown.bioasq.core.mesh.MeSHProbabilityDistribution;
 import edu.goergetown.bioasq.core.model.*;
+import edu.goergetown.bioasq.core.model.Vector;
 import edu.goergetown.bioasq.core.model.implementation.KMeansClusterer;
 import edu.goergetown.bioasq.core.task.*;
 import edu.goergetown.bioasq.ui.ITaskListener;
@@ -11,10 +12,7 @@ import edu.goergetown.bioasq.utils.BinaryBuffer;
 import edu.goergetown.bioasq.utils.DocumentListUtils;
 import edu.goergetown.bioasq.utils.FileUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Created by Yektaie on 5/19/2017.
@@ -22,7 +20,7 @@ import java.util.Random;
 public class ClusterMeSHesTask extends BaseTask {
     private SubTaskInfo LOADING_DATA = new SubTaskInfo("Loading MeSH from dataset", 1);
     private SubTaskInfo CLUSTER_MESH = new SubTaskInfo("Clustering MeSH [%s] [iteration: %d]", 10);
-    private IMeSHClusterer clusterer = new KMeansClusterer(2048);
+    private IMeSHClusterer clusterer = new KMeansClusterer(2000);
     private ArrayList<SubTaskInfo> subTasks = null;
 
     @Override
@@ -60,12 +58,11 @@ public class ClusterMeSHesTask extends BaseTask {
     }
 
     private ArrayList<Cluster> loadPreviouslySavedClusters(IMeSHClusterer clusterer, int iteration) {
-        ArrayList<Cluster> result = new ArrayList<>();
-        String folder = clusterer.getSavingDestinationPath() + "temp-" + iteration + Constants.BACK_SLASH;
+        String folder = clusterer.getSavingDestinationPath() + "iteration-" + iteration + Constants.BACK_SLASH;
 
-        for (int i = 0; i < clusterer.numberOfIteration(); i++) {
-            Cluster cluster = new Cluster();
-            cluster.load(folder + "cluster-" + i + ".txt");
+        ArrayList<Cluster> result = Cluster.loadClusters(folder + "clusters.bin");
+        for (int i = 0; i < result.size(); i++) {
+            Cluster cluster = result.get(i);
             cluster.vectors.clear();
         }
 
@@ -76,7 +73,7 @@ public class ClusterMeSHesTask extends BaseTask {
         int result = -1;
 
         for (int i = 0; i < clusterer.numberOfIteration(); i++) {
-            String folder = clusterer.getSavingDestinationPath() + "temp-" + i + Constants.BACK_SLASH;
+            String folder = clusterer.getSavingDestinationPath() + "iteration-" + i + Constants.BACK_SLASH;
             if (!FileUtils.exists(folder)) {
                 break;
             } else {
@@ -123,7 +120,7 @@ public class ClusterMeSHesTask extends BaseTask {
     }
 
     private String createOutputFolder(int i) {
-        String folder = clusterer.getSavingDestinationPath() + "temp-" + i + Constants.BACK_SLASH;
+        String folder = clusterer.getSavingDestinationPath() + "iteration-" + i + Constants.BACK_SLASH;
         if (!FileUtils.exists(folder)) {
             FileUtils.createDirectory(folder);
         }
@@ -139,9 +136,6 @@ public class ClusterMeSHesTask extends BaseTask {
         for (Cluster cluster : clusters) {
             cluster.updateCentroid();
 
-            String path = folder + "cluster-" + clusterIndex + ".txt";
-            cluster.save(path);
-
             documentCounts[clusterIndex] = cluster.vectors.size();
             clusterIndex++;
 
@@ -150,10 +144,14 @@ public class ClusterMeSHesTask extends BaseTask {
                 toRemove.add(cluster);
             }
 
-            cluster.clearVectors();
         }
 
         clusters.removeAll(toRemove);
+        Cluster.saveClusters(folder + "clusters.bin", clusters);
+
+        for (Cluster cluster : clusters) {
+            cluster.clearVectors();
+        }
         printReport(listener, documentCounts, toRemove.size());
 
         if (!last) {
@@ -357,6 +355,35 @@ public class ClusterMeSHesTask extends BaseTask {
 
         return subTasks;
     }
+
+    @Override
+    public Hashtable<String, ArrayList<Object>> getParameters() {
+        ArrayList<Object> clusterers = new ArrayList<>();
+
+        clusterers.add(new KMeansClusterer(1000));
+        clusterers.add(new KMeansClusterer(1500));
+        clusterers.add(new KMeansClusterer(2000));
+        clusterers.add(new KMeansClusterer(2500));
+        clusterers.add(new KMeansClusterer(3000));
+        clusterers.add(new KMeansClusterer(3500));
+        clusterers.add(new KMeansClusterer(4000));
+
+        Hashtable<String, ArrayList<Object>> result = new Hashtable<>();
+        result.put("k-means", clusterers);
+
+        return result;
+    }
+
+    @Override
+    public void setParameter(String name, Object value) {
+        clusterer = (IMeSHClusterer) value;
+    }
+
+    @Override
+    public Object getParameter(String name) {
+        return clusterer;
+    }
+
 }
 
 class MeSHClassifierThread extends Thread implements ISubTaskThread {

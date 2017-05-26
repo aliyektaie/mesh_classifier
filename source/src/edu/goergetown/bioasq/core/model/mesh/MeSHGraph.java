@@ -18,6 +18,12 @@ import java.util.Hashtable;
  * Created by Yektaie on 5/22/2017.
  */
 public class MeSHGraph {
+    private int similarityType = 0;
+
+    public MeSHGraph(int similarityType) {
+        this.similarityType = similarityType;
+    }
+
     public void createUnsortedWeightFile(ArrayList<Vector> vectors, BaseTask task, SubTaskInfo subTask, ITaskListener listener, String path) {
         long totalCount = getTotalCount(vectors);
         IJPair[] pairs = getSplitPairs(vectors);
@@ -94,6 +100,7 @@ public class MeSHGraph {
             thread.vectors = vectors;
             thread.coreIndex = i;
             thread.totalCount = totalCount / 4;
+            thread.similarityType = similarityType;
 
             threads.add(thread);
         }
@@ -217,6 +224,7 @@ class WeightCalculatorThread extends Thread implements ISubTaskThread {
     public int coreIndex = 0;
     public long totalCount = 0;
     public int[] counts = new int[101];
+    public int similarityType = 0;
 
     @Override
     public boolean isFinished() {
@@ -240,21 +248,21 @@ class WeightCalculatorThread extends Thread implements ISubTaskThread {
                     progress = count * 100.0 / totalCount;
 
                     Vector v2 = vectors.get(j);
-                    double similarity = v1.cosine(v2);
+                    double similarity = v1.getSimilarity(v2, similarityType);
                     counts[(int) (similarity * 100)]++;
 
-                    if (similarity > 0.9) {
+//                    if (similarity > 0.9) {
                         MeSHDistancePair pair = new MeSHDistancePair();
                         pair.similarity = similarity;
                         pair.vector1 = v1;
                         pair.vector2 = v2;
 
                         datas.add(pair.serialize());
-                        if (datas.size() == 100000) {
+                        if (datas.size() == 2000000) {
                             flushData(fs, datas);
                             datas.clear();
                         }
-                    }
+//                    }
                 }
             }
 
@@ -271,27 +279,27 @@ class WeightCalculatorThread extends Thread implements ISubTaskThread {
     }
 
     private void flushData(FileOutputStream fs, ArrayList<byte[]> datas) throws IOException {
-        int length = 0;
-        for (int i = 0; i < datas.size(); i++) {
-            length += BinaryBuffer.getSerializedLength(datas.get(i));
-        }
-
-        BinaryBuffer buffer = new BinaryBuffer(length);
-
-        for (byte[] data : datas) {
-            buffer.append(data);
-        }
-
-        fs.write(buffer.getBuffer());
+//        int length = 0;
+//        for (int i = 0; i < datas.size(); i++) {
+//            length += BinaryBuffer.getSerializedLength(datas.get(i));
+//        }
+//
+//        BinaryBuffer buffer = new BinaryBuffer(length);
+//
+//        for (byte[] data : datas) {
+//            buffer.append(data);
+//        }
+//
+//        fs.write(buffer.getBuffer());
 
         StringBuilder distribution = new StringBuilder();
-        double mx = 0;
+//        double mx = 0;
         for (int i = 1; i < counts.length; i++) {
-            if (mx < counts[i])
-                mx = counts[i];
+//            if (mx < counts[i])
+//                mx = counts[i];
         }
         for (int i = 0; i < counts.length; i++) {
-            distribution.append(String.format("%.2f,%.4f\r\n", i / 100.0, counts[i] / mx));
+            distribution.append(String.format("%.2f,%d\r\n", i / 100.0, counts[i] /*/ mx*/));
         }
 
         FileUtils.writeText(Constants.TEMP_FOLDER + "graph-weights-distribution-" + coreIndex + ".csv", distribution.toString());

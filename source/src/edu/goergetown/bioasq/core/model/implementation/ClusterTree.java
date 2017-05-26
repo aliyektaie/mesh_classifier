@@ -102,7 +102,7 @@ public class ClusterTree {
     }
 
     private static double getSimilarity(Vector node1, Vector node2) {
-        return node1.cosine(node2);
+        return node1.getSimilarity(node2, Vector.SIMILARITY_COSINE);
     }
 }
 

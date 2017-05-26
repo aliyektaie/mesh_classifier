@@ -23,8 +23,8 @@ public class MainWindow implements ITaskListener {
         tasks.add(new PartOfSpeechTaggerTask());
         tasks.add(new DocumentFeatureExtractorTask());
         tasks.add(new CreateMeSHProbabilityDistributionTask());
-//        tasks.add(new ClusterMeSHesTask());
-//        tasks.add(new HierarchicalAgglomerativeClusteringTask());
+        tasks.add(new ClusterMeSHesTask());
+        tasks.add(new HierarchicalAgglomerativeClusteringTask());
         tasks.add(new AdaptiveMeSHListClustererTask());
     }
 
@@ -225,6 +225,7 @@ public class MainWindow implements ITaskListener {
 
     private void showRunMode() {
         cmbTasks.setEnabled(false);
+        cmbTaskParameters.setEnabled(false);
         cmdRun.setVisible(false);
 
         progress.setVisible(true);
@@ -233,6 +234,7 @@ public class MainWindow implements ITaskListener {
 
     private void showSelectMode() {
         cmbTasks.setEnabled(true);
+        cmbTaskParameters.setEnabled(true);
         cmdRun.setVisible(true);
 
         progress.setVisible(false);

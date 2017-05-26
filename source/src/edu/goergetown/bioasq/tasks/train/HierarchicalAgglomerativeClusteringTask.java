@@ -30,6 +30,7 @@ public class HierarchicalAgglomerativeClusteringTask extends BaseTask {
     private SubTaskInfo CREATE_DOCUMENT_GRAPH = new SubTaskInfo("Create document graph", 100);
     private static String GRAPH_EDGE_WEIGHT_FILE_PATH = Constants.TEMP_FOLDER + "mesh-mesh-graph-weights.bin";
     private static String TEMP_GRAPH_EDGE_WEIGHT_FILE_PATH = Constants.TEMP_FOLDER + "mesh-mesh-graph-weights.temp.bin";
+    private SimilarityType similarityType = SimilarityType.cosine();
 
     @Override
     public void process(ITaskListener listener) {
@@ -44,7 +45,7 @@ public class HierarchicalAgglomerativeClusteringTask extends BaseTask {
         }
 
         ArrayList<Vector> vectors = loadDocuments(listener);
-        MeSHGraph graph = new MeSHGraph();
+        MeSHGraph graph = new MeSHGraph(similarityType.value);
 
         if (!FileUtils.exists(TEMP_GRAPH_EDGE_WEIGHT_FILE_PATH)) {
             graph.createUnsortedWeightFile(vectors, this, CREATE_DOCUMENT_GRAPH, listener, TEMP_GRAPH_EDGE_WEIGHT_FILE_PATH);
@@ -115,8 +116,8 @@ public class HierarchicalAgglomerativeClusteringTask extends BaseTask {
             }
         }
 
-        result.setLength(1.0);
         result.optimize();
+        result.setLength(1.0);
 
         return result;
 
@@ -144,5 +145,62 @@ public class HierarchicalAgglomerativeClusteringTask extends BaseTask {
         result.add(CREATE_DOCUMENT_GRAPH);
 
         return result;
+    }
+
+    @Override
+    public Hashtable<String, ArrayList<Object>> getParameters() {
+        ArrayList<Object> thresholdCandidates = new ArrayList<>();
+
+        thresholdCandidates.add(SimilarityType.cosine());
+        thresholdCandidates.add(SimilarityType.jaccard());
+
+        Hashtable<String, ArrayList<Object>> result = new Hashtable<>();
+        result.put("similarityType", thresholdCandidates);
+
+        return result;
+    }
+
+    @Override
+    public void setParameter(String name, Object value) {
+        if (value != null) {
+            this.similarityType = (SimilarityType) value;
+        }
+    }
+
+    @Override
+    public Object getParameter(String name) {
+        return similarityType;
+    }
+
+}
+
+class SimilarityType {
+    public String name = "";
+    public int value = 0;
+
+    public SimilarityType(String name, int value) {
+        this.name = name;
+        this.value = value;
+    }
+
+    public static SimilarityType jaccard() {
+        return new SimilarityType("Jaccard", Vector.SIMILARITY_JACCARD);
+    }
+
+    public static SimilarityType cosine() {
+        return new SimilarityType("Cosine", Vector.SIMILARITY_COSINE);
+    }
+
+    @Override
+    public String toString() {
+        return name;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof SimilarityType) {
+            return value == ((SimilarityType)obj).value;
+        }
+        return false;
     }
 }

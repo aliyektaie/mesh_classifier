@@ -2,4 +2,5 @@ source/.idea/workspace.xml
 source/.idea/uiDesigner.xml
 source/out/
 data/
-source/lib/stanford-postagger/
+*.class
+source/out/production/source/Program.class

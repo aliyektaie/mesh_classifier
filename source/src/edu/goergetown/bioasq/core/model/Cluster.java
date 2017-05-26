@@ -41,7 +41,53 @@ public class Cluster {
         return centroid;
     }
 
-    public void save(String path) {
+    public static void saveClusters(String path, ArrayList<Cluster> clusters) {
+        int length = 4;
+        length += 4 * clusters.size();
+        int indexOffset = length;
+
+        ArrayList<byte[]> data = new ArrayList<>();
+        for (int i = 0; i < clusters.size(); i++) {
+            byte[] d = clusters.get(i).serialize();
+            length += BinaryBuffer.getSerializedLength(d);
+            data.add(d);
+        }
+
+        BinaryBuffer buffer = new BinaryBuffer(length);
+
+        buffer.append(data.size());
+        int lengthUpToHere = 0;
+        for (int i = 0; i < data.size(); i++) {
+            buffer.append(indexOffset + lengthUpToHere);
+            lengthUpToHere += (4 + data.get(i).length);
+        }
+
+        for (int i = 0; i < data.size(); i++) {
+            buffer.append(data.get(i));
+        }
+
+        FileUtils.writeBinary(path, buffer.getBuffer());
+    }
+
+    public static ArrayList<Cluster> loadClusters(String path) {
+        ArrayList<Cluster> result = new ArrayList<>();
+        BinaryBuffer buffer = new BinaryBuffer(FileUtils.readBinaryFile(path));
+        int count = buffer.readInt();
+        for (int i = 0; i < count; i++) {
+            buffer.readInt();
+        }
+
+        for (int i = 0; i < count; i++) {
+            Cluster cluster = new Cluster();
+            cluster.load(buffer.readByteArray());
+
+            result.add(cluster);
+        }
+
+        return result;
+    }
+
+    public byte[] serialize() {
         ArrayList<byte[]> data = new ArrayList<>();
         byte[] centroidSerialized = centroid.serialize();
 
@@ -63,11 +109,11 @@ public class Cluster {
             buffer.append(vector);
         }
 
-        FileUtils.writeBinary(path, buffer.getBuffer());
+        return buffer.getBuffer();
     }
 
-    public void load(String path) {
-        BinaryBuffer buffer = new BinaryBuffer(FileUtils.readBinaryFile(path));
+    public void load(byte[] data) {
+        BinaryBuffer buffer = new BinaryBuffer(data);
 
         centroid = new Vector();
         centroid.load(buffer.readByteArray());
@@ -82,4 +128,22 @@ public class Cluster {
             vectors.add(v);
         }
     }
+
+    @Override
+    public String toString() {
+        StringBuilder result = new StringBuilder();
+
+        result.append("edu.goergetown.bioasq.core.model.Cluster:");
+        result.append("\r\n    Centroid: ");
+        result.append(centroid.toString().replace("\r\n", "\r\n    "));
+        result.append("\r\n    Vectors[").append(vectors.size()).append("]:");
+        for (int i = 0; i < vectors.size(); i++) {
+            Vector v = vectors.get(i);
+            result.append("\r\n        [").append(i).append("] ");
+            result.append(v.toString().replace("\r\n", "\r\n        "));
+        }
+
+        return result.toString();
+    }
+
 }

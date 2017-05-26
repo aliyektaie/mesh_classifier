@@ -14,7 +14,7 @@ import java.util.ArrayList;
  */
 public class KMeansClusterer implements IMeSHClusterer {
     private int numberOfClusters = 800;
-    private ClusterTree clusterTree = null;
+//    private ClusterTree clusterTree = null;
 
     public KMeansClusterer(int numberOfClusters) {
         this.numberOfClusters = numberOfClusters;
@@ -87,11 +87,24 @@ public class KMeansClusterer implements IMeSHClusterer {
     }
 
     public double getSimilarity(Vector centroid, Vector vector) {
-        return centroid.cosine(vector);
+        return centroid.getSimilarity(vector, Vector.SIMILARITY_COSINE);
     }
 
     @Override
     public void initializeClusteringIteration(ArrayList<Cluster> clusters) {
-        clusterTree = ClusterTree.build(clusters);
+//        clusterTree = ClusterTree.build(clusters);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof KMeansClusterer) {
+            return ((KMeansClusterer)obj).numberOfCluster() == numberOfCluster();
+        }
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        return "K-Means [" + numberOfCluster() + "]";
     }
 }

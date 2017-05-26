@@ -10,10 +10,11 @@ public class Constants {
             ROOT_FOLDER = "/media/yektaie/External/";
         } else {
             BACK_SLASH = "\\";
-            ROOT_FOLDER = "E:\\";
+            ROOT_FOLDER = "e:\\";
         }
 
-        STANFORD_POS_MODEL_FILE_PATH = ROOT_FOLDER + "mesh_classifier" + BACK_SLASH + "source" + BACK_SLASH + "lib" + BACK_SLASH + "stanford-postagger" + BACK_SLASH + "models" + BACK_SLASH + "english-bidirectional-distsim.tagger";
+//        STANFORD_POS_MODEL_FILE_PATH = ROOT_FOLDER + "mesh_classifier" + BACK_SLASH + "source" + BACK_SLASH + "lib" + BACK_SLASH + "stanford-postagger" + BACK_SLASH + "models" + BACK_SLASH + "english-bidirectional-distsim.tagger";
+        STANFORD_POS_MODEL_FILE_PATH = "D:\\Projects\\MeSH\\mesh_classifier\\source\\lib\\stanford-postagger\\models\\english-bidirectional-distsim.tagger";
 
         UMLS_INSTALLATION_LOCATION = ROOT_FOLDER + "UMLS" + BACK_SLASH;
 
@@ -28,6 +29,7 @@ public class Constants {
 
     }
 
+    public static int CORE_COUNT = 4;
     public static String BACK_SLASH = "";
     private static String ROOT_FOLDER = "";
     public static String STANFORD_POS_MODEL_FILE_PATH = "";
@@ -40,7 +42,6 @@ public class Constants {
     public static String DOCUMENT_FEATURES_DATA_FOLDER = "";
     public static String ORIGINAL_DATA_FILE = "";
     public static String TEMP_FOLDER = "";
-    public static int CORE_COUNT = 4;
 
     public static String getDataFolder(int year) {
         return String.format("%s%s%s%d%s", DATA_FOLDER, "By Year", BACK_SLASH, year, BACK_SLASH);
