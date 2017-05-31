@@ -1,6 +1,7 @@
 package edu.goergetown.bioasq.ui;
 
 import edu.goergetown.bioasq.core.task.ITask;
+import edu.goergetown.bioasq.tasks.evaluation.*;
 import edu.goergetown.bioasq.tasks.preprocess.*;
 import edu.goergetown.bioasq.tasks.train.*;
 import edu.goergetown.bioasq.utils.FileUtils;
@@ -9,12 +10,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+import java.util.Hashtable;
 
 /**
  * Created by yektaie on 4/18/17.
  */
 public class MainWindow implements ITaskListener {
-    private final static double COEF = 2.2;
+    private final static double COEF = 2.1;
     private boolean enableParameterCallback = false;
 
     private void initTasks() {
@@ -26,6 +28,8 @@ public class MainWindow implements ITaskListener {
         tasks.add(new ClusterMeSHesTask());
         tasks.add(new HierarchicalAgglomerativeClusteringTask());
         tasks.add(new AdaptiveMeSHListClustererTask());
+        tasks.add(new CreateClassifierModelFileTask());
+        tasks.add(new EvaluationTask());
     }
 
     private static final Font FONT = new Font("Nato Sans 10", Font.PLAIN, c(14));
@@ -37,7 +41,8 @@ public class MainWindow implements ITaskListener {
     private JLabel lblSelectTaskParameters = new JLabel();
     private JLabel lblProgress = new JLabel();
     private JComboBox cmbTasks = new JComboBox();
-    private JComboBox cmbTaskParameters = new JComboBox();
+    private JComboBox cmbTaskParameter1 = new JComboBox();
+    private JComboBox cmbTaskParameter2 = new JComboBox();
     private JButton cmdRun = new JButton();
     private JTextArea txtLog = new JTextArea();
     private JScrollPane logContainer = null;
@@ -71,35 +76,46 @@ public class MainWindow implements ITaskListener {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 ITask task = (ITask) cmbTasks.getSelectedItem();
-                cmbTaskParameters.removeAllItems();
-                cmbTaskParameters.setEnabled(task.getParameters() != null);
+                cmbTaskParameter1.removeAllItems();
+                cmbTaskParameter2.removeAllItems();
+                int paramCount = getParameterCount(task);
+                cmbTaskParameter1.setEnabled(paramCount >= 1);
+                cmbTaskParameter2.setEnabled(paramCount >= 2);
 
-                if (task.getParameters() != null) {
-                    String key = (String) task.getParameters().keySet().toArray()[0];
-                    ArrayList<Object> values = task.getParameters().get(key);
-                    cmbTaskParameters.setName(key);
+                if (paramCount >= 1) {
+                    setupParameterComboBox(task, cmbTaskParameter1, 0);
+                }
 
-                    enableParameterCallback = false;
-                    for (Object value : values) {
-                        cmbTaskParameters.addItem(value);
-                    }
-                    enableParameterCallback = true;
-
-                    cmbTaskParameters.setSelectedItem(task.getParameter(key));
+                if (paramCount >= 2) {
+                    setupParameterComboBox(task, cmbTaskParameter2, 1);
                 }
             }
         });
 
-        cmbTaskParameters.setSize(c(804), c(25));
-        cmbTaskParameters.setLocation(c(200),c(52));
-        cmbTaskParameters.setFont(FONT);
+        cmbTaskParameter1.setSize(c(390), c(25));
+        cmbTaskParameter1.setLocation(c(200),c(52));
+        cmbTaskParameter1.setFont(FONT);
 
-        cmbTaskParameters.addActionListener(new AbstractAction() {
+        cmbTaskParameter2.setSize(c(390), c(25));
+        cmbTaskParameter2.setLocation(c(614),c(52));
+        cmbTaskParameter2.setFont(FONT);
+
+        cmbTaskParameter1.addActionListener(new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 if (enableParameterCallback) {
                     ITask task = (ITask) cmbTasks.getSelectedItem();
-                    task.setParameter(cmbTaskParameters.getName(), cmbTaskParameters.getSelectedItem());
+                    task.setParameter(cmbTaskParameter1.getName(), cmbTaskParameter1.getSelectedItem());
+                }
+            }
+        });
+
+        cmbTaskParameter2.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                if (enableParameterCallback) {
+                    ITask task = (ITask) cmbTasks.getSelectedItem();
+                    task.setParameter(cmbTaskParameter2.getName(), cmbTaskParameter2.getSelectedItem());
                 }
             }
         });
@@ -132,7 +148,8 @@ public class MainWindow implements ITaskListener {
         mainPanel.add(lblSelectTask);
         mainPanel.add(lblSelectTaskParameters);
         mainPanel.add(cmbTasks);
-        mainPanel.add(cmbTaskParameters);
+        mainPanel.add(cmbTaskParameter1);
+        mainPanel.add(cmbTaskParameter2);
         mainPanel.add(cmdRun);
         mainPanel.add(logContainer);
         mainPanel.add(progress);
@@ -147,6 +164,29 @@ public class MainWindow implements ITaskListener {
 
         showSelectMode();
 
+    }
+
+    private void setupParameterComboBox(ITask task, JComboBox cmbParameter, int paramIndex) {
+        String key = (String) task.getParameters().keySet().toArray()[paramIndex];
+        ArrayList<Object> values = task.getParameters().get(key);
+        cmbParameter.setName(key);
+
+        enableParameterCallback = false;
+        for (Object value : values) {
+            cmbParameter.addItem(value);
+        }
+        enableParameterCallback = true;
+
+        cmbParameter.setSelectedItem(task.getParameter(key));
+    }
+
+    private int getParameterCount(ITask task) {
+        Hashtable<String, ArrayList<Object>> p = task.getParameters();
+        if (p == null) {
+            return 0;
+        }
+
+        return p.size();
     }
 
     private void onTaskSelected() {
@@ -225,7 +265,8 @@ public class MainWindow implements ITaskListener {
 
     private void showRunMode() {
         cmbTasks.setEnabled(false);
-        cmbTaskParameters.setEnabled(false);
+        cmbTaskParameter1.setEnabled(false);
+        cmbTaskParameter2.setEnabled(false);
         cmdRun.setVisible(false);
 
         progress.setVisible(true);
@@ -234,7 +275,8 @@ public class MainWindow implements ITaskListener {
 
     private void showSelectMode() {
         cmbTasks.setEnabled(true);
-        cmbTaskParameters.setEnabled(true);
+        cmbTaskParameter1.setEnabled(true);
+        cmbTaskParameter2.setEnabled(true);
         cmdRun.setVisible(true);
 
         progress.setVisible(false);

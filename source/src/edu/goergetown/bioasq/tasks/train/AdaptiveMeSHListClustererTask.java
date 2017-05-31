@@ -80,7 +80,16 @@ public class AdaptiveMeSHListClustererTask extends BaseTask {
         ArrayList<Cluster> result = clusters;
 
         for (int i = 0; i < workerThreads.size(); i++) {
-            result.addAll(((AdaptiveClusteringThread) workerThreads.get(i)).newClusters);
+            AdaptiveClusteringThread thread = ((AdaptiveClusteringThread) workerThreads.get(i));
+            result.addAll(thread.newClusters);
+
+            try {
+                for (Cluster clonedcluster : thread.clusters) {
+                    clonedcluster.clonedFrom.vectors.addAll(clonedcluster.vectors);
+                }
+            } catch (Exception ex) {
+
+            }
         }
 
         return result;
@@ -155,6 +164,7 @@ public class AdaptiveMeSHListClustererTask extends BaseTask {
         for (Cluster cluster : clusters) {
             Cluster c = new Cluster();
             c.centroid = cluster.centroid;
+            c.clonedFrom = cluster;
 
             result.add(c);
         }
@@ -388,7 +398,9 @@ public class AdaptiveMeSHListClustererTask extends BaseTask {
 
     @Override
     public void setParameter(String name, Object value) {
-        CLUSTERING_SIMILARITY_THRESHOLD = ((AdaptiveClusteringParameter) value).threshold;
+        if (value!= null) {
+            CLUSTERING_SIMILARITY_THRESHOLD = ((AdaptiveClusteringParameter) value).threshold;
+        }
     }
 
     @Override
@@ -430,8 +442,9 @@ class AdaptiveClusteringThread extends Thread implements ISubTaskThread {
 
     @Override
     public void run() {
-        for (int i = 0; i < vectorsList.size(); i++) {
-            progress = i * 100.0 / vectorsList.size();
+        int count = vectorsList.size();
+        for (int i = 0; i < count; i++) {
+            progress = i * 100.0 / count;
 
             Vector vector = vectorsList.get(vectorsList.size() - i - 1);
             Cluster cluster = getClusterForVector(clusters, vector);

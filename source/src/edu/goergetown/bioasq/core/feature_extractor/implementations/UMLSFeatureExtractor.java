@@ -8,11 +8,8 @@ import edu.goergetown.bioasq.core.document.Term;
 import edu.goergetown.bioasq.core.feature_extractor.IDocumentFeatureExtractor;
 import edu.goergetown.bioasq.core.umls.UMLSDictionary;
 import edu.goergetown.bioasq.ui.ITaskListener;
-import edu.goergetown.bioasq.utils.FileUtils;
 import edu.goergetown.bioasq.utils.Matrix;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 
 /**
@@ -55,21 +52,16 @@ public class UMLSFeatureExtractor implements IDocumentFeatureExtractor {
         toBeIgnoredPOS.add("#");
     }
 
+    private ArrayList<String> inputFiles = null;
+
     @Override
-    public String getDestinationFolder() {
-        String path = Constants.DOCUMENT_FEATURES_DATA_FOLDER;
-        path += ("umls" + Constants.BACK_SLASH);
-        return path;
+    public String getDestinationFolderName() {
+        return "umls";
     }
 
     @Override
     public String getTitle() {
         return "UMLS Term Extractor";
-    }
-
-    @Override
-    public boolean needNormalizationOfFeatures() {
-        return true;
     }
 
     @Override
@@ -82,6 +74,11 @@ public class UMLSFeatureExtractor implements IDocumentFeatureExtractor {
         TopicRankFeatureExtractor.buildResultFeatureSet(result, terms, scores);
 
         return result;
+    }
+
+    @Override
+    public void setInputFiles(ArrayList<String> inputFiles) {
+        this.inputFiles = inputFiles;
     }
 
     private ArrayList<NounPhrase> getBagOfWords(Document document) {
@@ -137,10 +134,6 @@ public class UMLSFeatureExtractor implements IDocumentFeatureExtractor {
     }
 
     @Override
-    public void normalizeFeatures(ITaskListener listener, ArrayList<DocumentFeatureSet> documentsFeatureList, ArrayList<Document> documents) {
-    }
-
-    @Override
     public boolean needPreprocessTask() {
         return true;
     }
@@ -151,7 +144,7 @@ public class UMLSFeatureExtractor implements IDocumentFeatureExtractor {
     }
 
     @Override
-    public void prepreocess(ITaskListener listener) {
+    public void preprocess(ITaskListener listener) {
         this.umls = UMLSDictionary.loadDictionary(listener);
     }
 

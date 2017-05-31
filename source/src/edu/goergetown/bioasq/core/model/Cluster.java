@@ -1,5 +1,7 @@
 package edu.goergetown.bioasq.core.model;
 
+import edu.goergetown.bioasq.Constants;
+import edu.goergetown.bioasq.ui.ITaskListener;
 import edu.goergetown.bioasq.utils.BinaryBuffer;
 import edu.goergetown.bioasq.utils.FileUtils;
 import java.util.ArrayList;
@@ -7,6 +9,7 @@ import java.util.ArrayList;
 public class Cluster {
     public ArrayList<Vector> vectors = new ArrayList<>();
     public Vector centroid = new Vector();
+    public Cluster clonedFrom = null;
 
     public void addVector(Vector vector, boolean updateCentroid) {
         synchronized (this) {
@@ -69,24 +72,6 @@ public class Cluster {
         FileUtils.writeBinary(path, buffer.getBuffer());
     }
 
-    public static ArrayList<Cluster> loadClusters(String path) {
-        ArrayList<Cluster> result = new ArrayList<>();
-        BinaryBuffer buffer = new BinaryBuffer(FileUtils.readBinaryFile(path));
-        int count = buffer.readInt();
-        for (int i = 0; i < count; i++) {
-            buffer.readInt();
-        }
-
-        for (int i = 0; i < count; i++) {
-            Cluster cluster = new Cluster();
-            cluster.load(buffer.readByteArray());
-
-            result.add(cluster);
-        }
-
-        return result;
-    }
-
     public byte[] serialize() {
         ArrayList<byte[]> data = new ArrayList<>();
         byte[] centroidSerialized = centroid.serialize();
@@ -131,19 +116,47 @@ public class Cluster {
 
     @Override
     public String toString() {
-        StringBuilder result = new StringBuilder();
-
-        result.append("edu.goergetown.bioasq.core.model.Cluster:");
-        result.append("\r\n    Centroid: ");
-        result.append(centroid.toString().replace("\r\n", "\r\n    "));
-        result.append("\r\n    Vectors[").append(vectors.size()).append("]:");
-        for (int i = 0; i < vectors.size(); i++) {
-            Vector v = vectors.get(i);
-            result.append("\r\n        [").append(i).append("] ");
-            result.append(v.toString().replace("\r\n", "\r\n        "));
-        }
-
-        return result.toString();
+        return String.valueOf(vectors.size());
+//        StringBuilder result = new StringBuilder();
+//
+//        result.append("edu.goergetown.bioasq.core.model.Cluster:");
+//        result.append("\r\n    Centroid: ");
+//        result.append(centroid.toString().replace("\r\n", "\r\n    "));
+//        result.append("\r\n    Vectors[").append(vectors.size()).append("]:");
+//        for (int i = 0; i < vectors.size(); i++) {
+//            Vector v = vectors.get(i);
+//            result.append("\r\n        [").append(i).append("] ");
+//            result.append(v.toString().replace("\r\n", "\r\n        "));
+//        }
+//
+//        return result.toString();
     }
 
+    public static ArrayList<Cluster> loadClusters(String path) {
+        return loadClusters(path, null);
+    }
+
+    public static ArrayList<Cluster> loadClusters(String path, ITaskListener listener) {
+        ArrayList<Cluster> result = new ArrayList<>();
+        BinaryBuffer buffer = new BinaryBuffer(FileUtils.readBinaryFile(path));
+        int count = buffer.readInt();
+        for (int i = 0; i < count; i++) {
+            buffer.readInt();
+        }
+
+        if (listener != null)
+            listener.setCurrentState("Loading clusters [" + path.replace(Constants.DATA_FOLDER, "") + "]");
+
+        for (int i = 0; i < count; i++) {
+            if (listener != null && i % 100 == 0) {
+                listener.setProgress(i, count);
+            }
+            Cluster cluster = new Cluster();
+            cluster.load(buffer.readByteArray());
+
+            result.add(cluster);
+        }
+
+        return result;
+    }
 }

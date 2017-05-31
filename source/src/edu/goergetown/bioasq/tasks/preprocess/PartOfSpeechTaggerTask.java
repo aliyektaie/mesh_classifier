@@ -19,7 +19,8 @@ import java.util.Hashtable;
 public class PartOfSpeechTaggerTask extends BaseTask {
     private SubTaskInfo LOADER_TASK = new SubTaskInfo("Loading BioASQ entries", 1);
     private SubTaskInfo TAGGER_TASK = new SubTaskInfo("Part of Speech Tagging entries", 935);
-    private int partToRun = 3;
+    private int partToRun = 1;
+    private int totalPartCount = 2;
 
     @Override
     public void process(ITaskListener listener) {
@@ -27,33 +28,56 @@ public class PartOfSpeechTaggerTask extends BaseTask {
 
         entries = less(entries);
 
-        convertEntries(listener, entries);
-        mergeEntries(listener);
+        ArrayList<String> files = convertEntries(listener, entries);
+        mergeEntries(listener, files);
     }
 
-    private void mergeEntries(ITaskListener listener) {
-        ArrayList<Document> documents = new ArrayList<>();
+    private void mergeEntries(ITaskListener listener, ArrayList<String> files) {
+        Hashtable<String, ArrayList<String>> splitedByYear = splitFilesOnYears(files);
 
-        for (int i = 0; i < 21; i++) {
-            listener.log("Processing part " + i + " for merge");
-            for (int j = 0; j < 4; j++) {
-                String path = Constants.POS_DATA_FOLDER_BY_YEAR + 2015 + "-" + j+ "-" + i + ".bin";
-                for(Document d : Document.loadListFromFile(path)) {
-                    documents.add(d);
-                }
+        for (String year : splitedByYear.keySet()) {
+            ArrayList<Document> documents = new ArrayList<>();
+            ArrayList<String> filePaths = splitedByYear.get(year);
+
+            listener.log("Processing parts for " + year);
+
+            for (String path : filePaths) {
+                listener.log("    Processing file: " + path.substring(path.lastIndexOf(Constants.BACK_SLASH) + 1));
+                documents.addAll(Document.loadListFromFile(path));
+            }
+
+            listener.log("    Merging all files for " + year);
+            String path = Constants.POS_DATA_FOLDER_BY_YEAR + year + "-" + partToRun + ".bin";
+            Document.saveList(path, documents);
+
+            for (String pathToDelete : filePaths) {
+                FileUtils.delete(pathToDelete);
             }
         }
+    }
 
-        listener.log("Merging all files");
-        String path = Constants.POS_DATA_FOLDER_BY_YEAR + 2015 + "-" + partToRun+".bin";
-        Document.saveList(path, documents);
+    private Hashtable<String, ArrayList<String>> splitFilesOnYears(ArrayList<String> files) {
+        Hashtable<String, ArrayList<String>> result = new Hashtable<>();
+
+        for (String path : files) {
+            String year = path.substring(path.lastIndexOf(Constants.BACK_SLASH) + 1);
+            year = year.substring(0, year.indexOf("-"));
+
+            if (!result.containsKey(year)) {
+                result.put(year, new ArrayList<>());
+            }
+
+            result.get(year).add(path);
+        }
+
+        return result;
     }
 
     private ArrayList<BioAsqEntry> less(ArrayList<BioAsqEntry> entries) {
         ArrayList<BioAsqEntry> result = new ArrayList<>();
 
         for (int i = 0; i < entries.size(); i++) {
-            if ( i%4 == partToRun) {
+            if (i % totalPartCount == partToRun) {
                 result.add(entries.get(i));
             }
         }
@@ -61,7 +85,9 @@ public class PartOfSpeechTaggerTask extends BaseTask {
         return result;
     }
 
-    private void convertEntries(ITaskListener listener, ArrayList<BioAsqEntry> entries) {
+    private ArrayList<String> convertEntries(ITaskListener listener, ArrayList<BioAsqEntry> entries) {
+        ArrayList<String> result = new ArrayList<>();
+
         Document.fromBioAsq(entries.get(0));
         ArrayList<ArrayList<BioAsqEntry>> parts = splitParts(entries, Constants.CORE_COUNT);
         ArrayList<ISubTaskThread> threads = createPartOfSpeechWorkerThreads(parts, Constants.CORE_COUNT);
@@ -69,6 +95,12 @@ public class PartOfSpeechTaggerTask extends BaseTask {
         listener.log("Start POS Tagger Threads");
         executeWorkerThreads(listener, TAGGER_TASK, threads);
         listener.log("POS Tagger Threads Finished");
+
+        for (ISubTaskThread t : threads) {
+            result.addAll(((PartOfSpeechTaggerThread) t).savedFiles);
+        }
+
+        return result;
     }
 
     private ArrayList<ISubTaskThread> createPartOfSpeechWorkerThreads(ArrayList<ArrayList<BioAsqEntry>> parts, int coreCount) {
@@ -102,7 +134,7 @@ public class PartOfSpeechTaggerTask extends BaseTask {
 
     private ArrayList<BioAsqEntry> loadEntries(ITaskListener listener) {
         ArrayList<BioAsqEntry> result = new ArrayList<>();
-        ArrayList<String> files= loadInputFilesList();
+        ArrayList<String> files = loadInputFilesList();
 
         for (int i = 0; i < files.size(); i++) {
             StringBuilder lines = new StringBuilder();
@@ -182,6 +214,7 @@ class PartOfSpeechTaggerThread extends Thread implements ISubTaskThread {
     public ArrayList<Document> results = new ArrayList<>();
     private double progress = 0;
     public int threadIndex = 0;
+    public ArrayList<String> savedFiles = new ArrayList<>();
 
     @Override
     public void run() {
@@ -214,14 +247,15 @@ class PartOfSpeechTaggerThread extends Thread implements ISubTaskThread {
     private void saveResultsInFiles(int saveIndex) {
         Hashtable<Integer, ArrayList<Document>> splitOnYears = splitDocumentsOnYear();
         for (int year : splitOnYears.keySet()) {
-            saveFile(splitOnYears.get(year), year,saveIndex);
+            saveFile(splitOnYears.get(year), year, saveIndex);
         }
     }
 
     private void saveFile(ArrayList<Document> documents, int year, int saveIndex) {
-        String path = outputFilePath + year + "-" + threadIndex+ "-" + saveIndex + ".bin";
+        String path = outputFilePath + year + "-" + threadIndex + "-" + saveIndex + ".bin";
 
         Document.saveList(path, documents);
+        savedFiles.add(path);
     }
 
     private Hashtable<Integer, ArrayList<Document>> splitDocumentsOnYear() {

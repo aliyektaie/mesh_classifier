@@ -3,7 +3,6 @@ package edu.goergetown.bioasq.core.feature_extractor;
 import edu.goergetown.bioasq.Constants;
 import edu.goergetown.bioasq.core.document.*;
 import edu.goergetown.bioasq.ui.ITaskListener;
-import edu.goergetown.bioasq.utils.DocumentListUtils;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -12,29 +11,23 @@ import java.util.Hashtable;
  * Created by yektaie on 5/18/17.
  */
 public abstract class BaseTermFrequencyFeatureExtractor implements IDocumentFeatureExtractor {
-    private static boolean preprocessDone = false;
+    private boolean preprocessDone = false;
     private static int documentCount = 0;
     private static int documentAverageLength;
     private static Hashtable<String, Integer> numberOfDocumentForEachTerm = null;
+    private ArrayList<String> inputFiles = null;
 
     @Override
-    public String getDestinationFolder() {
-        String path = Constants.DOCUMENT_FEATURES_DATA_FOLDER;
-        path += (getWeightFolderName() + Constants.BACK_SLASH);
-        return path;
+    public void setInputFiles(ArrayList<String> inputFiles) {
+        this.inputFiles = inputFiles;
+    }
+
+    @Override
+    public String getDestinationFolderName() {
+        return getWeightFolderName();
     }
 
     protected abstract String getWeightFolderName();
-
-    @Override
-    public boolean needNormalizationOfFeatures() {
-        return false;
-    }
-
-    @Override
-    public void normalizeFeatures(ITaskListener listener, ArrayList<DocumentFeatureSet> documentsFeatureList, ArrayList<Document> documents) {
-
-    }
 
     @Override
     public boolean needPreprocessTask() {
@@ -47,46 +40,43 @@ public abstract class BaseTermFrequencyFeatureExtractor implements IDocumentFeat
     }
 
     @Override
-    public void prepreocess(ITaskListener listener) {
+    public void preprocess(ITaskListener listener) {
         if (preprocessDone) {
             return;
         }
 
-        ArrayList<Integer> years = DocumentListUtils.getAvailableDocumentYears();
         final int[] documentCount = {0};
         final int[] documentAverageLength = {0};
         Hashtable<String, Integer> numberOfDocumentForEachTerm = new Hashtable<>();
 
-        for (int i = 0; i < Constants.CORE_COUNT; i++) {
-            for (int year : years) {
-                String path = Constants.POS_DATA_FOLDER_BY_YEAR + year + "-" + i + ".bin";
-                listener.log("");
-                listener.log("Processing file " + year + "-" + i + ".bin");
+        for (String path : inputFiles) {
 
-                final int[] docCountProcessed = {0};
-                Document.iterateOnDocumentListFile(path, new IDocumentLoaderCallback() {
-                    @Override
-                    public void processDocument(Document document, int i, int totalDocumentCount) {
-                        documentCount[0]++;
-                        docCountProcessed[0]++;
+            listener.log("");
+            listener.log("Processing file " + path.substring(path.lastIndexOf(Constants.BACK_SLASH) + 1));
 
-                        if (docCountProcessed[0] % 10000 == 0) {
-                            listener.log("   " + docCountProcessed[0] + " of " + totalDocumentCount);
-                        }
-                        Hashtable<String, Integer> tokens = exctractBagOfWords(document);
-                        for (String term : tokens.keySet()) {
-                            documentAverageLength[0] += tokens.get(term);
+            final int[] docCountProcessed = {0};
+            Document.iterateOnDocumentListFile(path, new IDocumentLoaderCallback() {
+                @Override
+                public void processDocument(Document document, int i, int totalDocumentCount) {
+                    documentCount[0]++;
+                    docCountProcessed[0]++;
 
-                            int numberOfDocumentWithTerm = 1;
-                            if (numberOfDocumentForEachTerm.containsKey(term)) {
-                                numberOfDocumentWithTerm += numberOfDocumentForEachTerm.get(term);
-                            }
-
-                            numberOfDocumentForEachTerm.put(term, numberOfDocumentWithTerm);
-                        }
+                    if (docCountProcessed[0] % 10000 == 0) {
+                        listener.log("   " + docCountProcessed[0] + " of " + totalDocumentCount);
                     }
-                });
-            }
+                    Hashtable<String, Integer> tokens = extractBagOfWords(document);
+                    for (String term : tokens.keySet()) {
+                        documentAverageLength[0] += tokens.get(term);
+
+                        int numberOfDocumentWithTerm = 1;
+                        if (numberOfDocumentForEachTerm.containsKey(term)) {
+                            numberOfDocumentWithTerm += numberOfDocumentForEachTerm.get(term);
+                        }
+
+                        numberOfDocumentForEachTerm.put(term, numberOfDocumentWithTerm);
+                    }
+                }
+            });
         }
 
         BaseTermFrequencyFeatureExtractor.documentCount = documentCount[0];
@@ -98,7 +88,7 @@ public abstract class BaseTermFrequencyFeatureExtractor implements IDocumentFeat
 
     @Override
     public DocumentFeatureSet extractFeatures(Document document) {
-        Hashtable<String, Integer> bagOfWords = exctractBagOfWords(document);
+        Hashtable<String, Integer> bagOfWords = extractBagOfWords(document);
         int documentLength = getDocumentLength(bagOfWords);
 
         DocumentFeatureSet result = new DocumentFeatureSet(getTitle());
@@ -125,7 +115,7 @@ public abstract class BaseTermFrequencyFeatureExtractor implements IDocumentFeat
         return result;
     }
 
-    private Hashtable<String, Integer> exctractBagOfWords(Document document) {
+    private Hashtable<String, Integer> extractBagOfWords(Document document) {
         Hashtable<String, Integer> result = new Hashtable<>();
 
         addTerms(result, document.title, getWeightForTitleTokens());

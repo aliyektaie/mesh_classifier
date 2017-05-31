@@ -35,7 +35,7 @@ public class CreateDatasetMergeTask extends BaseTask {
     }
 
     private void mergeEntries(String folder) {
-        String year = folder.substring(folder.lastIndexOf("\\") + 1);
+        String year = folder.substring(folder.lastIndexOf(Constants.BACK_SLASH) + 1);
         ArrayList<String> files = FileUtils.getFiles(folder);
 
         File file = new File(Constants.DATA_FOLDER_BY_YEAR + year + ".txt");

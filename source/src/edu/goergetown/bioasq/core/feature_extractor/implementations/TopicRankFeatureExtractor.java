@@ -35,21 +35,16 @@ public class TopicRankFeatureExtractor implements IDocumentFeatureExtractor {
         NOUN_PHRASE_TAGS.add("NNPS");
     }
 
+    private ArrayList<String> inputFiles = null;
+
     @Override
-    public String getDestinationFolder() {
-        String path = Constants.DOCUMENT_FEATURES_DATA_FOLDER;
-        path += ("topic-rank" + Constants.BACK_SLASH);
-        return path;
+    public String getDestinationFolderName() {
+        return "topic-rank";
     }
 
     @Override
     public String getTitle() {
         return "TopicRank Keyword Extractor";
-    }
-
-    @Override
-    public boolean needNormalizationOfFeatures() {
-        return false;
     }
 
     @Override
@@ -62,6 +57,11 @@ public class TopicRankFeatureExtractor implements IDocumentFeatureExtractor {
         buildResultFeatureSet(result, terms, scores);
 
         return result;
+    }
+
+    @Override
+    public void setInputFiles(ArrayList<String> inputFiles) {
+        this.inputFiles = inputFiles;
     }
 
     public static void buildResultFeatureSet(DocumentFeatureSet result, ArrayList<NounPhrase> terms, double[] scores) {
@@ -236,11 +236,6 @@ public class TopicRankFeatureExtractor implements IDocumentFeatureExtractor {
     }
 
     @Override
-    public void normalizeFeatures(ITaskListener listener, ArrayList<DocumentFeatureSet> documentsFeatureList, ArrayList<Document> documents) {
-
-    }
-
-    @Override
     public boolean needPreprocessTask() {
         return false;
     }
@@ -251,7 +246,7 @@ public class TopicRankFeatureExtractor implements IDocumentFeatureExtractor {
     }
 
     @Override
-    public void prepreocess(ITaskListener listener) {
+    public void preprocess(ITaskListener listener) {
 
     }
 

@@ -10,19 +10,17 @@ import java.util.ArrayList;
  * Created by yektaie on 5/15/17.
  */
 public interface IDocumentFeatureExtractor {
-    String getDestinationFolder();
+    String getDestinationFolderName();
 
     String getTitle();
-
-    boolean needNormalizationOfFeatures();
-
-    void normalizeFeatures(ITaskListener listener, ArrayList<DocumentFeatureSet> documentsFeatureList, ArrayList<Document> documents);
 
     boolean needPreprocessTask();
 
     int getPreprocessTaskGetTimeInMinutes();
 
-    void prepreocess(ITaskListener listener);
+    void preprocess(ITaskListener listener);
 
     DocumentFeatureSet extractFeatures(Document document);
+
+    void setInputFiles(ArrayList<String> inputFiles);
 }

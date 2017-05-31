@@ -13,6 +13,7 @@ import edu.goergetown.bioasq.ui.ITaskListener;
 import edu.goergetown.bioasq.utils.DocumentListUtils;
 import edu.goergetown.bioasq.utils.FileUtils;
 
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
@@ -25,43 +26,92 @@ public class DocumentFeatureExtractorTask extends BaseTask {
     private SubTaskInfo TASK_PROCESS = new SubTaskInfo("Extracting document features", 100);
     private SubTaskInfo TASK_PRE_PROCESS = new SubTaskInfo("Preprocessing feature extractor", 100);
 
+    private DocumentFeatureExtractorInputType inputSource = DocumentFeatureExtractorInputType.TRAIN;
+
     public DocumentFeatureExtractorTask() {
         featureExtractor = DocumentFeatureExtractors.getFeatureExtractors().get(0);
     }
 
     @Override
     public void process(ITaskListener listener) {
-        ArrayList<Integer> years = DocumentListUtils.getAvailableDocumentYears();
         createFolder(featureExtractor);
 
+        ArrayList<String> inputFiles = getInputFiles();
+        featureExtractor.setInputFiles(inputFiles);
+
         if (featureExtractor.needPreprocessTask()) {
-            featureExtractor.prepreocess(listener);
+            featureExtractor.preprocess(listener);
         }
 
-        ArrayList<ISubTaskThread> thread = splitTaskToThreads(years, featureExtractor);
-        executeWorkerThreads(listener, TASK_PROCESS, thread);
+        ArrayList<ISubTaskThread> threads = splitTaskToThreads(featureExtractor, inputFiles);
+        executeWorkerThreads(listener, TASK_PROCESS, threads);
 
-        if (featureExtractor.needNormalizationOfFeatures()){
-            featureExtractor.normalizeFeatures(listener, null, null);
+        mergeFinalFilesIfTestOrDev(threads);
+    }
+
+    private void mergeFinalFilesIfTestOrDev(ArrayList<ISubTaskThread> threads) {
+        if (inputSource.type != DocumentFeatureExtractorInputType.TYPE_TRAIN) {
+            ArrayList<String> files = new ArrayList<>();
+            for (ISubTaskThread thread : threads) {
+                files.addAll(((DocumentFeatureExtractorThread)thread).finalMergedFiles);
+            }
+
+            String title = inputSource.title;
+            title = title.substring(0, title.indexOf(" ")).toLowerCase();
+
+            String path = inputSource.getBaseFolder() + featureExtractor.getDestinationFolderName() + Constants.BACK_SLASH + title + "_set.bin";
+            DocumentFeatureSet.mergeFiles(path, files);
+
+            for (String file : files) {
+                FileUtils.delete(file);
+            }
         }
+    }
+
+    private ArrayList<String> getInputFiles() {
+        ArrayList<String> result = new ArrayList<>();
+
+        if (inputSource.type == DocumentFeatureExtractorInputType.TYPE_TRAIN) {
+            ArrayList<Integer> years = DocumentListUtils.getAvailableDocumentYears();
+            for (int i = 0; i < Constants.CORE_COUNT; i++) {
+                for (int year : years) {
+                    String path = Constants.POS_DATA_FOLDER_BY_YEAR + year + "-" + i + ".bin";
+                    result.add(path);
+                }
+            }
+        } else if (inputSource.type == DocumentFeatureExtractorInputType.TYPE_DEV) {
+            result.add(Constants.SETS_DATA_FOLDER + "dev_set.bin");
+        } else if (inputSource.type == DocumentFeatureExtractorInputType.TYPE_TEST) {
+            result.add(Constants.SETS_DATA_FOLDER + "test_set.bin");
+        }
+
+        return result;
     }
 
     private void createFolder(IDocumentFeatureExtractor featureExtractor) {
-        if (!FileUtils.exists(featureExtractor.getDestinationFolder())) {
-            FileUtils.createDirectory(featureExtractor.getDestinationFolder());
+        String folder = inputSource.getBaseFolder() + featureExtractor.getDestinationFolderName() + Constants.BACK_SLASH;
+
+        if (!FileUtils.exists(folder)) {
+            FileUtils.createDirectory(folder);
         }
     }
 
-    private ArrayList<ISubTaskThread> splitTaskToThreads(ArrayList<Integer> years, IDocumentFeatureExtractor featureExtractor) {
+    private ArrayList<ISubTaskThread> splitTaskToThreads(IDocumentFeatureExtractor featureExtractor, ArrayList<String> inputFiles) {
         ArrayList<ISubTaskThread> result = new ArrayList<>();
+        int threadCount = inputSource.getThreadCount();
 
-        for (int i = 0; i < Constants.CORE_COUNT; i++) {
+        for (int i = 0; i < threadCount; i++) {
             DocumentFeatureExtractorThread thread = new DocumentFeatureExtractorThread();
 
             thread.featureExtractor = featureExtractor;
             thread.threadID = i;
-            for (int year : years) {
-                thread.documentFiles.add(Constants.POS_DATA_FOLDER_BY_YEAR + year + "-" + i + ".bin");
+            thread.inputSource = inputSource;
+            thread.includeMeSHListInFeatures = true;
+
+            for (int j = 0; j < inputFiles.size(); j++) {
+                if (threadCount == 1 || j % threadCount == i) {
+                    thread.documentFiles.add(inputFiles.get(j));
+                }
             }
 
             result.add(thread);
@@ -101,7 +151,13 @@ public class DocumentFeatureExtractorTask extends BaseTask {
         ArrayList<Object> extractors = new ArrayList<>();
         extractors.addAll(DocumentFeatureExtractors.getFeatureExtractors());
 
+        ArrayList<Object> inputSources = new ArrayList<>();
+        inputSources.add(DocumentFeatureExtractorInputType.TRAIN);
+        inputSources.add(DocumentFeatureExtractorInputType.DEV);
+        inputSources.add(DocumentFeatureExtractorInputType.TEST);
+
         result.put("extractor", extractors);
+        result.put("sources", inputSources);
 
         return result;
     }
@@ -110,6 +166,8 @@ public class DocumentFeatureExtractorTask extends BaseTask {
     public Object getParameter(String name) {
         if (name.equals("extractor")) {
             return featureExtractor;
+        } else if (name.equals("sources")) {
+            return inputSource;
         }
 
         return null;
@@ -117,8 +175,12 @@ public class DocumentFeatureExtractorTask extends BaseTask {
 
     @Override
     public void setParameter(String name, Object value) {
-        if (name.equals("extractor")) {
-            featureExtractor = (IDocumentFeatureExtractor) value;
+        if (value != null) {
+            if (name.equals("extractor")) {
+                featureExtractor = (IDocumentFeatureExtractor) value;
+            } else if (name.equals("sources")) {
+                inputSource = (DocumentFeatureExtractorInputType) value;
+            }
         }
     }
 }
@@ -134,6 +196,9 @@ class DocumentFeatureExtractorThread extends Thread implements ISubTaskThread {
     private int savedTimeCount = 0;
     private int processedCount = 0;
     private Hashtable<Integer, ArrayList<String>> filesSaved = new Hashtable<>();
+    public DocumentFeatureExtractorInputType inputSource = null;
+    public ArrayList<String> finalMergedFiles = new ArrayList<>();
+    public boolean includeMeSHListInFeatures = false;
 
     @Override
     public void run() {
@@ -160,8 +225,9 @@ class DocumentFeatureExtractorThread extends Thread implements ISubTaskThread {
 
     private void mergeFeatureSetFiles() {
         for (int year : filesSaved.keySet()) {
-            String path = featureExtractor.getDestinationFolder() + year + "-" + threadID + ".bin";
+            String path = inputSource.getBaseFolder() + featureExtractor.getDestinationFolderName() + Constants.BACK_SLASH + year + "-" + threadID + ".bin";
             DocumentFeatureSet.mergeFiles(path, filesSaved.get(year));
+            finalMergedFiles.add(path);
 
             for (String filePath : filesSaved.get(year)) {
                 FileUtils.delete(filePath);
@@ -170,9 +236,15 @@ class DocumentFeatureExtractorThread extends Thread implements ISubTaskThread {
     }
 
     private void processDocument(Document document) {
-        DocumentFeatureSet features = featureExtractor.extractFeatures(document);
-
         int year = Integer.valueOf(document.metadata.get("year"));
+
+        DocumentFeatureSet features = featureExtractor.extractFeatures(document);
+        if (includeMeSHListInFeatures) {
+            features.meshList = document.categories;
+        }
+        features.documentIdentifier = document.identifier;
+        features.documentYear = year;
+
         if (processedDocuments.containsKey(year)) {
             processedDocuments.get(year).add(features);
         } else {
@@ -190,7 +262,7 @@ class DocumentFeatureExtractorThread extends Thread implements ISubTaskThread {
     }
 
     private void saveProcessedDocuments() {
-        String folder = featureExtractor.getDestinationFolder();
+        String folder = inputSource.getBaseFolder() + featureExtractor.getDestinationFolderName() + Constants.BACK_SLASH;
         for (int year : processedDocuments.keySet()) {
             String path = folder + year + "-" + threadID + "-" + savedTimeCount + ".bin";
             ArrayList<DocumentFeatureSet> list = processedDocuments.get(year);
@@ -225,6 +297,57 @@ class DocumentFeatureExtractorThread extends Thread implements ISubTaskThread {
 
         for (String path : documentFiles) {
             result += Document.getDocumentCountInFile(path);
+        }
+
+        return result;
+    }
+}
+
+class DocumentFeatureExtractorInputType {
+    public static final int TYPE_TRAIN = 0;
+    public static final int TYPE_DEV = 1;
+    public static final int TYPE_TEST = 2;
+
+    public String title = "";
+    public int type = 0;
+
+    public static DocumentFeatureExtractorInputType TRAIN = new DocumentFeatureExtractorInputType("Training Data", TYPE_TRAIN);
+    public static DocumentFeatureExtractorInputType DEV = new DocumentFeatureExtractorInputType("Dev Data", TYPE_DEV);
+    public static DocumentFeatureExtractorInputType TEST = new DocumentFeatureExtractorInputType("Test Data", TYPE_TEST);
+
+    private DocumentFeatureExtractorInputType(String title, int type) {
+        this.title = title;
+        this.type = type;
+    }
+
+    @Override
+    public String toString() {
+        return title;
+    }
+
+    public String getBaseFolder() {
+        String result = "";
+
+        switch (type) {
+            case DocumentFeatureExtractorInputType.TYPE_TRAIN:
+                result = Constants.TRAIN_DOCUMENT_FEATURES_DATA_FOLDER;
+                break;
+            case DocumentFeatureExtractorInputType.TYPE_DEV:
+                result = Constants.DEV_DOCUMENT_FEATURES_DATA_FOLDER;
+                break;
+            case DocumentFeatureExtractorInputType.TYPE_TEST:
+                result = Constants.TEST_DOCUMENT_FEATURES_DATA_FOLDER;
+                break;
+        }
+
+        return result;
+    }
+
+    public int getThreadCount() {
+        int result = 1;
+
+        if (type == TYPE_TRAIN) {
+            result = Constants.CORE_COUNT;
         }
 
         return result;

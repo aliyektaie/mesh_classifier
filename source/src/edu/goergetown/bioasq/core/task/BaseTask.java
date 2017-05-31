@@ -11,7 +11,7 @@ import java.util.Hashtable;
 public abstract class BaseTask implements ITask {
     protected final String CLASS_PREPROCESS = "Pre-process";
     protected final String CLASS_TRAIN = "Train";
-    protected final String CLASS_CLASSIFIER = "Classifier";
+    protected final String CLASS_CLASSIFIER = "Evaluation";
 
     public String getTitle() {
         return getTaskClass() + " - " + getTaskTitle();
