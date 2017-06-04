@@ -24,7 +24,6 @@ import java.util.Hashtable;
 public class AdaptiveMeSHListClustererTask extends BaseTask {
     private final int SIMILARITY_TYPE = Vector.SIMILARITY_COSINE;
     private double ADD_SUBSET_OF_DATA_SET_IN_ITERATION = 0.01;
-    // candidates: 0.28, 0.22, 0.2, 0.17
     private double CLUSTERING_SIMILARITY_THRESHOLD = 0.17;
 
     private SubTaskInfo LOADING_DOCUMENT = new SubTaskInfo("Loading documents", 1);
@@ -251,7 +250,7 @@ public class AdaptiveMeSHListClustererTask extends BaseTask {
         distributionSD = Math.sqrt(distributionSD / (similarities.length - 1));
 
         listener.log("-------------------------------------------");
-        listener.log(String.format("iteration: %d -> %d", iteration, subIteration));
+        listener.log(String.format("iteration: %d", iteration, subIteration));
         listener.log("-------------------------------------------");
         listener.log(String.format("   Cluster Count: %d", clusters.size()));
         listener.log(String.format("   Cluster Similarity AVG: %.3f", similarityAverage));
@@ -260,7 +259,7 @@ public class AdaptiveMeSHListClustererTask extends BaseTask {
         listener.log(String.format("   Cluster Document Count SD: %.3f", distributionSD));
         listener.log(String.format("   Cluster Removed: %d", removedCount));
 
-        String path = Constants.CLUSTERING_DOCUMENT_MESH_INFO_FOLDER + "adaptive" + Constants.BACK_SLASH + CLUSTERING_SIMILARITY_THRESHOLD + Constants.BACK_SLASH + "report.txt";
+        String path = Constants.CLUSTERING_DOCUMENT_MESH_INFO_FOLDER + "adaptive" + Constants.BACK_SLASH + CLUSTERING_SIMILARITY_THRESHOLD + Constants.BACK_SLASH + "report-" + iteration + ".txt";
         listener.saveLogs(path);
     }
 
@@ -385,9 +384,10 @@ public class AdaptiveMeSHListClustererTask extends BaseTask {
     public Hashtable<String, ArrayList<Object>> getParameters() {
         ArrayList<Object> thresholdCandidates = new ArrayList<>();
 
+        thresholdCandidates.add(new AdaptiveClusteringParameter(0.13));
+        thresholdCandidates.add(new AdaptiveClusteringParameter(0.15));
         thresholdCandidates.add(new AdaptiveClusteringParameter(0.17));
         thresholdCandidates.add(new AdaptiveClusteringParameter(0.2));
-        thresholdCandidates.add(new AdaptiveClusteringParameter(0.22));
         thresholdCandidates.add(new AdaptiveClusteringParameter(0.28));
 
         Hashtable<String, ArrayList<Object>> result = new Hashtable<>();

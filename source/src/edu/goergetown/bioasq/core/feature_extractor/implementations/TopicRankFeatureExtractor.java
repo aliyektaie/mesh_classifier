@@ -8,6 +8,7 @@ import edu.goergetown.bioasq.core.document.Term;
 import edu.goergetown.bioasq.core.feature_extractor.IDocumentFeatureExtractor;
 import edu.goergetown.bioasq.ui.ITaskListener;
 import edu.goergetown.bioasq.utils.Matrix;
+import edu.goergetown.bioasq.utils.PartOfSpeechUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,23 +18,10 @@ import java.util.Arrays;
  */
 public class TopicRankFeatureExtractor implements IDocumentFeatureExtractor {
     public static final double NOUN_PHRASE_SIMILARITY_THRESHOLD = 33.32;
-    private static ArrayList<String> NOUN_PHRASE_TAGS = null;
+    private static ArrayList<String> toBeConsideredPOS = PartOfSpeechUtils.getPartOfSpeechToBeConsidered();
 
     private static final double LANDA = 0.85;
     private static final int SCORE_CALCULATION_ITERATION_COUNT = 20;
-
-    static {
-        NOUN_PHRASE_TAGS = new ArrayList<>();
-
-        NOUN_PHRASE_TAGS.add("JJ");
-        NOUN_PHRASE_TAGS.add("NN");
-        NOUN_PHRASE_TAGS.add("JJR");
-        NOUN_PHRASE_TAGS.add("NNP");
-        NOUN_PHRASE_TAGS.add("FW");
-        NOUN_PHRASE_TAGS.add("JJS");
-        NOUN_PHRASE_TAGS.add("NNS");
-        NOUN_PHRASE_TAGS.add("NNPS");
-    }
 
     private ArrayList<String> inputFiles = null;
 
@@ -214,7 +202,7 @@ public class TopicRankFeatureExtractor implements IDocumentFeatureExtractor {
 
         NounPhrase current = new NounPhrase();
         for (Term token : sentence.tokens) {
-            if (NOUN_PHRASE_TAGS.contains(token.partOfSpeech)) {
+            if (toBeConsideredPOS.contains(token.partOfSpeech)) {
                 String stemmed = token.token.toLowerCase();
                 current.phrase.set(0, (current.phrase.get(0) + " " + stemmed).trim());
                 current.locations.get(0).add(index);

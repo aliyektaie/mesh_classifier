@@ -9,30 +9,44 @@ public class MeSHUtils {
     private static ArrayList<String> listOfCheckTags = null;
     private static ArrayList<String> countries = null;
 
+    public static ArrayList<String> getCheckTagsMeSH(boolean createNew) {
+        if (createNew) {
+            return createNewList();
+        } else {
+            return getCheckTagsMeSH();
+        }
+    }
+
     public static ArrayList<String> getCheckTagsMeSH() {
         if (listOfCheckTags == null) {
-            listOfCheckTags = new ArrayList<>();
-
-            listOfCheckTags.add("Adolescent");
-            listOfCheckTags.add("Adult");
-            listOfCheckTags.add("Young Adult");
-            listOfCheckTags.add("Aged");
-            listOfCheckTags.add("Aged, 80 and over");
-            listOfCheckTags.add("Humans");
-            listOfCheckTags.add("Infant");
-            listOfCheckTags.add("Child");
-            listOfCheckTags.add("Male");
-            listOfCheckTags.add("Child, Preschool");
-            listOfCheckTags.add("Middle Aged");
-            listOfCheckTags.add("Female");
-            listOfCheckTags.add("Swine");
-            listOfCheckTags.add("Animals");
-            listOfCheckTags.add("Adult");
-
-            listOfCheckTags.addAll(getCountriesList());
+            listOfCheckTags = createNewList();
         }
 
         return listOfCheckTags;
+    }
+
+    private static ArrayList<String> createNewList() {
+        ArrayList<String> list = new ArrayList<>();
+
+        list.add("Adolescent");
+        list.add("Adult");
+        list.add("Young Adult");
+        list.add("Aged");
+        list.add("Aged, 80 and over");
+        list.add("Humans");
+        list.add("Infant");
+        list.add("Child");
+        list.add("Male");
+        list.add("Child, Preschool");
+        list.add("Middle Aged");
+        list.add("Female");
+        list.add("Swine");
+        list.add("Animals");
+        list.add("Adult");
+
+        list.addAll(getCountriesList());
+
+        return list;
     }
 
     public static ArrayList<String> getCountriesList() {

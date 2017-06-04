@@ -7,10 +7,12 @@ import edu.goergetown.bioasq.core.model.classification.ClassificationCluster;
 import edu.goergetown.bioasq.core.model.classification.ClassifierParameter;
 import edu.goergetown.bioasq.core.model.classification.MeSHClassificationModelBase;
 import edu.goergetown.bioasq.core.predictor.IMeshPredictor;
+import edu.goergetown.bioasq.core.predictor.MeshPredictors;
 import edu.goergetown.bioasq.core.task.BaseTask;
 import edu.goergetown.bioasq.core.task.ISubTaskThread;
 import edu.goergetown.bioasq.core.task.SubTaskInfo;
 import edu.goergetown.bioasq.ui.ITaskListener;
+import edu.goergetown.bioasq.utils.FileUtils;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -20,10 +22,11 @@ import java.util.Random;
  * Created by Yektaie on 5/30/2017.
  */
 public class EvaluationTask extends BaseTask {
-    private SubTaskInfo EVALUATE_TASK = new SubTaskInfo("Evaluating data set", 10);
+    private SubTaskInfo EVALUATE_TASK = new SubTaskInfo("Evaluating data set", 200);
     private ClassifierParameter parameter = null;
     private EvaluationInputSource inputSource = EvaluationInputSource.DEV;
     private ArrayList<ClassifierParameter> configurations = new ArrayList<>();
+    private IMeshPredictor predictor = null;
 
     public EvaluationTask() {
         ArrayList<ClassifierParameter> configurations = ClassifierParameter.getConfigurations();
@@ -36,14 +39,17 @@ public class EvaluationTask extends BaseTask {
         if (this.configurations.size() > 0) {
             parameter = this.configurations.get(0);
         }
+
+        predictor = MeshPredictors.getPredictors().get(0).duplicate();
     }
 
     @Override
     public void process(ITaskListener listener) {
-        listener.log("Load model clusters");
-        ArrayList<ClassificationCluster> model = MeSHClassificationModelBase.load(listener, parameter);
         listener.log("Load model MD5 hash");
         String modelHash = MeSHClassificationModelBase.getModelHash(listener, parameter);
+        listener.log(getCacheFilePath(modelHash));
+        listener.log("Load model clusters");
+        ArrayList<ClassificationCluster> model = MeSHClassificationModelBase.load(listener, parameter);
 
         listener.log("Loading set document features");
         ArrayList<DocumentFeatureSet> documents = DocumentFeatureSet.loadListFromFile(inputSource.getFeatureSetFolder() + parameter.termExtractionMethod + Constants.BACK_SLASH + inputSource.getFeatureSetFileName());
@@ -51,6 +57,95 @@ public class EvaluationTask extends BaseTask {
         listener.log("Classifying documents into clusters");
         ArrayList<ISubTaskThread> threads = createWorkerThreads(model, modelHash, documents);
         executeWorkerThreads(listener, EVALUATE_TASK, threads);
+
+        saveReport(threads, parameter);
+
+        if (!existsCacheFile(modelHash)) {
+            listener.log("Saving cluster map cache file");
+            listener.setCurrentState("Saving cluster map cache file");
+            Hashtable<String, String> cachedClusterMaps = getClusterMaps(threads);
+            saveCacheFile(listener, modelHash, cachedClusterMaps);
+        }
+
+    }
+
+    private void saveReport(ArrayList<ISubTaskThread> threads, ClassifierParameter parameter) {
+        ArrayList<DocumentEvaluationResult> results = new ArrayList<>();
+        for (int i = 0; i < threads.size(); i++) {
+            EvaluationThread t = (EvaluationThread) threads.get(i);
+            results.addAll(t.results);
+        }
+
+        String reportFolder = Constants.REPORTS_FOLDER + parameter.toString() + Constants.BACK_SLASH + predictor.getReportFolderName() + Constants.BACK_SLASH;
+        if (!FileUtils.exists(reportFolder)) {
+            FileUtils.createDirectory(reportFolder);
+        }
+
+        saveCSVReport(results, reportFolder);
+    }
+
+    private void saveCSVReport(ArrayList<DocumentEvaluationResult> results, String folder) {
+        StringBuilder result = new StringBuilder();
+        result.append("Document Identifier,Precision,Recall,F1 Score");
+
+        for (DocumentEvaluationResult entry : results) {
+            result.append(String.format("\r\n%s,%.5f,%.5f,%.5f", entry.documentIdentifier, entry.precision, entry.recall, entry.f1));
+        }
+
+        FileUtils.writeText(folder + "Predictions Metrics.csv", result.toString());
+    }
+
+    private void saveCacheFile(ITaskListener listener, String modelHash, Hashtable<String, String> cachedClusterMaps) {
+        StringBuilder result = new StringBuilder();
+
+        String del = "";
+        int count = 0;
+        int showUpdate = cachedClusterMaps.size() / 100;
+        for (String key : cachedClusterMaps.keySet()) {
+            if (count % showUpdate == 0)
+                listener.setProgress(count, cachedClusterMaps.size());
+
+            count++;
+            result.append(del);
+            result.append(String.format("%s -> %s", key, cachedClusterMaps.get(key)));
+
+            del = "\r\n";
+        }
+
+        FileUtils.writeText(getCacheFilePath(modelHash), result.toString());
+    }
+
+    private boolean existsCacheFile(String modelHash) {
+        String folder = Constants.TEMP_FOLDER + "Caches" + Constants.BACK_SLASH;
+        if (!FileUtils.exists(folder)) {
+            FileUtils.createDirectory(folder);
+        }
+
+        String path = getCacheFilePath(modelHash);
+        return FileUtils.exists(path);
+    }
+
+    private String getCacheFilePath(String modelHash) {
+        String folder = Constants.TEMP_FOLDER + "Caches" + Constants.BACK_SLASH;
+        StringBuilder fileName = new StringBuilder();
+        for (int i = 0; i < modelHash.length(); i++) {
+            char c = modelHash.charAt(i);
+            if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9')) {
+                fileName.append(c);
+            }
+        }
+        return folder + fileName + ".txt";
+    }
+
+    private Hashtable<String, String> getClusterMaps(ArrayList<ISubTaskThread> threads) {
+        Hashtable<String, String> result = new Hashtable<>();
+
+        for (int i = 0; i < threads.size(); i++) {
+            EvaluationThread t = (EvaluationThread) threads.get(i);
+            result.putAll(t.mappedDocument);
+        }
+
+        return result;
     }
 
     private ArrayList<ISubTaskThread> createWorkerThreads(ArrayList<ClassificationCluster> model, String modelHash, ArrayList<DocumentFeatureSet> documents) {
@@ -71,8 +166,25 @@ public class EvaluationTask extends BaseTask {
             t.modelClusters = model;
             t.modelHash = modelHash;
             t.documents = documentsList.get(i);
+            t.predictor = predictor;
+            t.mappedDocument = loadCache(modelHash);
 
             result.add(t);
+        }
+
+        return result;
+    }
+
+    private Hashtable<String, String> loadCache(String modelHash) {
+        Hashtable<String, String> result = new Hashtable<>();
+
+        if (FileUtils.exists(getCacheFilePath(modelHash))) {
+            String[] lines = FileUtils.readAllLines(getCacheFilePath(modelHash));
+
+            for (int i = 0; i < lines.length; i++) {
+                String[] parts = lines[i].split(" -> ");
+                result.put(parts[0], parts[1]);
+            }
         }
 
         return result;
@@ -131,47 +243,6 @@ public class EvaluationTask extends BaseTask {
 
 }
 
-class EvaluationInputSource {
-    public static final int TYPE_DEV = 1;
-    public static final int TYPE_TEST = 2;
-
-    public int type = 0;
-
-    private EvaluationInputSource(int type) {
-        this.type = type;
-    }
-
-    public static EvaluationInputSource TEST = new EvaluationInputSource(TYPE_TEST);
-    public static EvaluationInputSource DEV = new EvaluationInputSource(TYPE_DEV);
-
-    @Override
-    public String toString() {
-        return type == TYPE_DEV ? "Development" : "Test";
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof EvaluationInputSource) {
-            return type == ((EvaluationInputSource)obj).type;
-        }
-        return false;
-    }
-
-    public String getFeatureSetFolder() {
-        if (type == TYPE_DEV)
-            return Constants.DEV_DOCUMENT_FEATURES_DATA_FOLDER;
-
-        return Constants.TEST_DOCUMENT_FEATURES_DATA_FOLDER;
-    }
-
-    public String getFeatureSetFileName() {
-        if (type == TYPE_DEV)
-            return "dev_set.bin";
-
-        return "test_set.bin";
-    }
-}
-
 class EvaluationThread extends Thread implements ISubTaskThread {
     private boolean finished = false;
     private double progress = 0;
@@ -184,7 +255,8 @@ class EvaluationThread extends Thread implements ISubTaskThread {
 
     @Override
     public void run() {
-        for (int i = 0; i < documents.size(); i++) {
+        for (int i = 0; i < 200; i++) {
+//        for (int i = 0; i < documents.size(); i++) {
             updateProgress(i);
 
             DocumentFeatureSet document = documents.get(i);
@@ -194,7 +266,7 @@ class EvaluationThread extends Thread implements ISubTaskThread {
 
             if (cluster != null) {
                 cacheClusterMap(vector, cluster);
-                ArrayList<String> predictedMesh = predictor.predict(vector, cluster);
+                ArrayList<String> predictedMesh = predictor.predict(document, cluster);
                 ArrayList<String> correctMesh = document.meshList;
                 ArrayList<String> correctPredictions = getCorrectPredictions(predictedMesh, correctMesh);
 
@@ -232,6 +304,9 @@ class EvaluationThread extends Thread implements ISubTaskThread {
     }
 
     private ClassificationCluster getClassificationCluster(Vector vector) {
+        if (mappedDocument.containsKey(vector.identifier)) {
+            return getClassificationCluster(mappedDocument.get(vector.identifier));
+        }
         ClassificationCluster cluster = null;
         double similarity = -1;
 
@@ -242,6 +317,19 @@ class EvaluationThread extends Thread implements ISubTaskThread {
                 cluster = c;
             }
         }
+        return cluster;
+    }
+
+    private ClassificationCluster getClassificationCluster(String identifier) {
+        ClassificationCluster cluster = null;
+
+        for (ClassificationCluster c : modelClusters) {
+            if (c.identifier.toString().equals(identifier)) {
+                cluster = c;
+                break;
+            }
+        }
+
         return cluster;
     }
 

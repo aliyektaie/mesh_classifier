@@ -2,6 +2,7 @@ package edu.goergetown.bioasq.core.document;
 
 import edu.goergetown.bioasq.core.model.*;
 import edu.goergetown.bioasq.core.model.Vector;
+import edu.goergetown.bioasq.ui.ITaskListener;
 import edu.goergetown.bioasq.utils.BinaryBuffer;
 import edu.goergetown.bioasq.utils.FileUtils;
 
@@ -156,12 +157,23 @@ public class DocumentFeatureSet {
     }
 
     public static ArrayList<DocumentFeatureSet> loadListFromFile(String path) {
+        return loadListFromFile(null, path);
+    }
+
+    public static ArrayList<DocumentFeatureSet> loadListFromFile(ITaskListener listener, String path) {
         byte[] data = FileUtils.readBinaryFile(path);
         BinaryBuffer buffer = new BinaryBuffer(data);
+
+        if (listener != null) {
+            listener.log("Loading document feature set file '" + path + "'");
+        }
         ArrayList<DocumentFeatureSet> result = new ArrayList<>();
 
         int count = buffer.readInt();
         for (int i = 0; i < count; i++) {
+            if (listener != null && ((i + 1) % 10000 == 0)) {
+                listener.log("    " + (i+1) + " of " + count);
+            }
             try {
                 DocumentFeatureSet doc = new DocumentFeatureSet();
                 doc.load(buffer.readByteArray());
@@ -203,7 +215,9 @@ public class DocumentFeatureSet {
                 DocumentFeatureSet document = new DocumentFeatureSet();
                 document.load(data);
 
-                callback.processDocumentFeatureSet(document, i, totalDocumentCount);
+                if (!callback.processDocumentFeatureSet(document, i, totalDocumentCount)) {
+                    break;
+                }
             }
 
             inputFile.close();
@@ -249,7 +263,7 @@ public class DocumentFeatureSet {
     }
 
     public Vector toVector() {
-        Vector result = new Vector();
+        Vector result = new Vector(features.size());
 
         for (String feature : features.keySet()) {
             result.addWeight(feature, features.get(feature));

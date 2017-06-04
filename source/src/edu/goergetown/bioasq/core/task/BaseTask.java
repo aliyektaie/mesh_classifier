@@ -12,6 +12,7 @@ public abstract class BaseTask implements ITask {
     protected final String CLASS_PREPROCESS = "Pre-process";
     protected final String CLASS_TRAIN = "Train";
     protected final String CLASS_CLASSIFIER = "Evaluation";
+    protected final String CLASS_EXPERIMENT = "Experiment";
 
     public String getTitle() {
         return getTaskClass() + " - " + getTaskTitle();

@@ -2,6 +2,7 @@ package edu.goergetown.bioasq.core.feature_extractor.implementations;
 
 import edu.goergetown.bioasq.core.document.Term;
 import edu.goergetown.bioasq.core.feature_extractor.BaseTermFrequencyFeatureExtractor;
+import edu.goergetown.bioasq.utils.PartOfSpeechUtils;
 
 import java.util.ArrayList;
 
@@ -9,35 +10,10 @@ import java.util.ArrayList;
  * Created by yektaie on 5/18/17.
  */
 public class TFIDFFeatureExtractor extends BaseTermFrequencyFeatureExtractor {
-    private static ArrayList<String> toBeIgnoredPOS = new ArrayList<>();
+    private static ArrayList<String> toBeConsideredPOS = PartOfSpeechUtils.getPartOfSpeechToBeConsidered();
 
     private static final int TITLE_COEFFICIENT = 4;
     private static final int TEXT_COEFFICIENT = 1;
-
-    static {
-        toBeIgnoredPOS.add(":");
-        toBeIgnoredPOS.add("IN");
-        toBeIgnoredPOS.add("CC");
-        toBeIgnoredPOS.add("CD");
-        toBeIgnoredPOS.add(".");
-        toBeIgnoredPOS.add(",");
-        toBeIgnoredPOS.add("DT");
-        toBeIgnoredPOS.add("WDT");
-        toBeIgnoredPOS.add("TO");
-        toBeIgnoredPOS.add("``");
-        toBeIgnoredPOS.add("''");
-        toBeIgnoredPOS.add("WP");
-        toBeIgnoredPOS.add("MD");
-        toBeIgnoredPOS.add("PRP");
-        toBeIgnoredPOS.add("POS");
-        toBeIgnoredPOS.add("PRP$");
-        toBeIgnoredPOS.add("PDT");
-        toBeIgnoredPOS.add("EX");
-        toBeIgnoredPOS.add("WP$");
-        toBeIgnoredPOS.add("$");
-        toBeIgnoredPOS.add("UH");
-        toBeIgnoredPOS.add("#");
-    }
 
     @Override
     public String getTitle() {
@@ -51,7 +27,7 @@ public class TFIDFFeatureExtractor extends BaseTermFrequencyFeatureExtractor {
 
     @Override
     protected boolean shouldConsiderToken(Term token) {
-        return !toBeIgnoredPOS.contains(token.partOfSpeech);
+        return toBeConsideredPOS.contains(token.partOfSpeech);
     }
 
     @Override

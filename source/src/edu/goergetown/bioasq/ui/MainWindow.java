@@ -1,5 +1,6 @@
 package edu.goergetown.bioasq.ui;
 
+import edu.goergetown.bioasq.Constants;
 import edu.goergetown.bioasq.core.task.ITask;
 import edu.goergetown.bioasq.tasks.evaluation.*;
 import edu.goergetown.bioasq.tasks.preprocess.*;
@@ -16,7 +17,7 @@ import java.util.Hashtable;
  * Created by yektaie on 4/18/17.
  */
 public class MainWindow implements ITaskListener {
-    private final static double COEF = 2.1;
+    private final static double COEF = Constants.UI_COEF;
     private boolean enableParameterCallback = false;
 
     private void initTasks() {
@@ -30,9 +31,15 @@ public class MainWindow implements ITaskListener {
         tasks.add(new AdaptiveMeSHListClustererTask());
         tasks.add(new CreateClassifierModelFileTask());
         tasks.add(new EvaluationTask());
+//        tasks.add(new MeSHLabelTermOccurrenceInDocumentTask());
+//        tasks.add(new CalculateOveralScoreTask());
+//        tasks.add(new CalculateMeSHPresenceInClusterDistributionTask());
+//        tasks.add(new MeSHTermInDocumentTextClassifierTrainerTask());
+        tasks.add(new CreateMachineLearningTrainingFilesTask());
+        tasks.add(new MachineLearningClassifierTrainerTask());
     }
 
-    private static final Font FONT = new Font("Nato Sans 10", Font.PLAIN, c(14));
+    private static final Font FONT = new Font("Noto Sans", Font.PLAIN, c(12));
     public JPanel mainPanel;
 
     private ArrayList<ITask> tasks = new ArrayList<>();
@@ -300,6 +307,15 @@ public class MainWindow implements ITaskListener {
     public void log(String entry) {
         String time = formatTime((int) (System.currentTimeMillis() - taskStartTime));
         txtLog.append("[" + time + "] " + entry + "\r\n");
+
+
+        JScrollBar vertical = logContainer.getVerticalScrollBar();
+        vertical.setValue( vertical.getMaximum() );
+    }
+
+    @Override
+    public void logWithoutTime(String entry) {
+        txtLog.append(entry + "\r\n");
 
 
         JScrollBar vertical = logContainer.getVerticalScrollBar();

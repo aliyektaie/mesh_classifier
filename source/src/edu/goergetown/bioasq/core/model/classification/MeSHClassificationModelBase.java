@@ -102,7 +102,8 @@ public abstract class MeSHClassificationModelBase {
 
             for (Vector document : documents) {
                 Vector features = documentsFeatures.get(document.identifier);
-                for (FeatureValuePair f : features.features) {
+                for (int j = 0; j < features.featureCount; j++) {
+                    FeatureValuePair f = features.features[j];
                     centroid.addWeight(f.name, f.value);
                 }
             }
@@ -124,7 +125,7 @@ public abstract class MeSHClassificationModelBase {
         return result;
     }
 
-    private static ArrayList<Vector> loadDocuments(ITaskListener listener, ClassifierParameter parameter) {
+    public static ArrayList<Vector> loadDocuments(ITaskListener listener, ClassifierParameter parameter) {
         listener.log("Loading feature set [" + parameter.termExtractionMethod + "]");
         ArrayList<String> files = FileUtils.getFiles(Constants.TRAIN_DOCUMENT_FEATURES_DATA_FOLDER + parameter.termExtractionMethod + Constants.BACK_SLASH);
         ArrayList<Vector> result = new ArrayList<>();
@@ -138,12 +139,14 @@ public abstract class MeSHClassificationModelBase {
             int finalTotalCount = totalCount;
             DocumentFeatureSet.iterateOnDocumentFeatureSetListFile(file, new IDocumentFeatureSetLoaderCallback() {
                 @Override
-                public void processDocumentFeatureSet(DocumentFeatureSet featureSet, int i, int totalDocumentCount) {
+                public boolean processDocumentFeatureSet(DocumentFeatureSet featureSet, int i, int totalDocumentCount) {
                     result.add(featureSet.toVector());
 
                     if (result.size() % 1000 == 0) {
                         listener.setProgress(result.size(), finalTotalCount);
                     }
+
+                    return true;
                 }
             });
         }
@@ -151,7 +154,7 @@ public abstract class MeSHClassificationModelBase {
         return result;
     }
 
-    private static ArrayList<Cluster> loadClusters(ITaskListener listener, ClassifierParameter parameter) {
+    public static ArrayList<Cluster> loadClusters(ITaskListener listener, ClassifierParameter parameter) {
         String filePathTemplate = Constants.CLUSTERING_DOCUMENT_MESH_INFO_FOLDER + "adaptive" + Constants.BACK_SLASH + parameter.clusteringParameter + Constants.BACK_SLASH + "%d" + Constants.BACK_SLASH + "clusters.bin";
         int iteration = 1;
 

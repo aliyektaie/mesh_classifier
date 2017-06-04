@@ -10,5 +10,7 @@ public interface ITaskListener {
 
     void log(String entry);
 
+    void logWithoutTime(String entry);
+
     void saveLogs(String path);
 }

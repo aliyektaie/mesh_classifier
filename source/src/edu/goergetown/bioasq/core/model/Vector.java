@@ -14,7 +14,7 @@ public class Vector {
     private final int INITIAL_SIZE = 50;
     private final int GROWTH_SIZE = 50;
 
-    public FeatureValuePair[] features = new FeatureValuePair[INITIAL_SIZE];
+    public FeatureValuePair[] features = null;
     public int featureCount = 0;
 
     public String identifier = "";
@@ -22,6 +22,14 @@ public class Vector {
     private double length = -1;
 
     private Hashtable<String, FeatureValuePair> checkForDuplicateHelper = null;
+
+    public Vector() {
+        features = new FeatureValuePair[INITIAL_SIZE];
+    }
+
+    public Vector(int featureCount) {
+        features = new FeatureValuePair[featureCount];
+    }
 
     public void addWeight(String name, double weight) {
         if (checkForDuplicateHelper != null) {
@@ -281,9 +289,44 @@ public class Vector {
     public void checkForAddDuplicates() {
         checkForDuplicateHelper = new Hashtable<>();
 
-        for (FeatureValuePair pair : features) {
+        for (int i = 0; i < featureCount; i++) {
+            FeatureValuePair pair = features[i];
             checkForDuplicateHelper.put(pair.name, pair);
         }
+    }
+
+    public boolean containsFeature(String name) {
+        if (!optimized)
+            optimize();
+
+        int begin = 0;
+        int end = featureCount - 1;
+        int middle = 0;
+
+        name = name.toLowerCase();
+
+        int c = 0;
+        while (end - begin < 4 && c < 15) {
+            middle = (end + begin) / 2;
+            String m = features[middle].name.toLowerCase();
+            int cmp = m.compareTo(name);
+            if (cmp == 0) {
+                return true;
+            } else if (cmp > 0) {
+                end = middle;
+            } else {
+                begin = middle;
+            }
+            c++;
+        }
+
+        for (int i = begin; i <= end; i++) {
+            if (features[i].name.toLowerCase().equals(name)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
 
