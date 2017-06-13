@@ -1,9 +1,6 @@
 package edu.goergetown.bioasq.core.feature_extractor;
 
-import edu.goergetown.bioasq.core.feature_extractor.implementations.BM25FeatureExtractor;
-import edu.goergetown.bioasq.core.feature_extractor.implementations.TFIDFFeatureExtractor;
-import edu.goergetown.bioasq.core.feature_extractor.implementations.UMLSFeatureExtractor;
-import edu.goergetown.bioasq.core.feature_extractor.implementations.TopicRankFeatureExtractor;
+import edu.goergetown.bioasq.core.feature_extractor.implementations.*;
 
 import java.util.ArrayList;
 
@@ -17,6 +14,7 @@ public class DocumentFeatureExtractors {
         if (featureExtractors == null) {
             featureExtractors = new ArrayList<>();
 
+            featureExtractors.add(new QuickUMLSFeatureExtractor());
             featureExtractors.add(new BM25FeatureExtractor());
             featureExtractors.add(new TFIDFFeatureExtractor());
             featureExtractors.add(new TopicRankFeatureExtractor());

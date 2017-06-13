@@ -9,17 +9,19 @@ public class Constants {
     public static void initialize() {
         if (System.getProperty("os.name").toLowerCase().equals("linux")) {
             BACK_SLASH = "/";
-            ROOT_FOLDER = "/media/yektaie/Files/";
+            ROOT_FOLDER = "/media/yektaie/External/";
             STANFORD_POS_MODEL_FILE_PATH = "/media/yektaie/Files/Projects/MeSH/mesh_classifier/source/lib/stanford-postagger/models/english-bidirectional-distsim.tagger";
         } else {
             BACK_SLASH = "\\";
             if (isLaptop()) {
-                ROOT_FOLDER = "e:\\";
+                ROOT_FOLDER = "j:\\";
                 STANFORD_POS_MODEL_FILE_PATH = "D:\\Projects\\MeSH\\mesh_classifier\\source\\lib\\stanford-postagger\\models\\english-bidirectional-distsim.tagger";
+                CORE_COUNT = 4;
             } else {
-                ROOT_FOLDER = "c:\\Users\\zghasemi\\Desktop\\Ali\\";
+//                ROOT_FOLDER = "d:\\";
+                ROOT_FOLDER = "C:\\Users\\zghasemi\\Desktop\\Ali\\";
                 STANFORD_POS_MODEL_FILE_PATH = "c:\\Users\\zghasemi\\Desktop\\Ali\\mesh_classifier\\source\\lib\\stanford-postagger\\models\\english-bidirectional-distsim.tagger";
-                CORE_COUNT = 8;
+                CORE_COUNT = 7;
                 UI_COEF = 1;
             }
         }
@@ -45,7 +47,7 @@ public class Constants {
     }
 
     public static int CORE_COUNT = 4;
-    public static double UI_COEF = 2.15;
+    public static double UI_COEF = 2;
 
     public static String BACK_SLASH = "";
     private static String ROOT_FOLDER = "";

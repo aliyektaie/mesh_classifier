@@ -52,13 +52,13 @@ public class ClusterMeSHesTask extends BaseTask {
 
             ArrayList<ISubTaskThread> threads = createWorkerThreads(clusters, threadNumber, vectorsSplitList);
             executeWorkerThreads(listener, subTasks.get(i + 1), threads);
-            saveClusterInIteration(clusters, createOutputFolder(i), i == iteration - 1, listener);
+            saveClusterInIteration(clusters, createOutputFolder(i), i == iteration - 1, listener, i);
         }
 
     }
 
     private ArrayList<Cluster> loadPreviouslySavedClusters(IMeSHClusterer clusterer, int iteration) {
-        String folder = clusterer.getSavingDestinationPath() + "iteration-" + iteration + Constants.BACK_SLASH;
+        String folder = clusterer.getSavingDestinationPath() + iteration + Constants.BACK_SLASH;
 
         ArrayList<Cluster> result = Cluster.loadClusters(folder + "clusters.bin");
         for (int i = 0; i < result.size(); i++) {
@@ -73,7 +73,7 @@ public class ClusterMeSHesTask extends BaseTask {
         int result = -1;
 
         for (int i = 0; i < clusterer.numberOfIteration(); i++) {
-            String folder = clusterer.getSavingDestinationPath() + "iteration-" + i + Constants.BACK_SLASH;
+            String folder = clusterer.getSavingDestinationPath() + i + Constants.BACK_SLASH;
             if (!FileUtils.exists(folder)) {
                 break;
             } else {
@@ -86,24 +86,66 @@ public class ClusterMeSHesTask extends BaseTask {
         return result;
     }
 
-    private void printReport(ITaskListener listener, int[] distribution, int removed) {
-        double avg = 0;
-        for (int count : distribution)
-            avg += count;
+    private void printClusterReports(ITaskListener listener, ArrayList<Cluster> clusters, int iteration, int subIteration, int removedCount) {
+        double[] similarities = new double[clusters.size()];
+        int[] distribution = new int[clusters.size()];
+        double similarityAverage = 0;
+        double distributionAverage = 0;
 
-        avg = avg / distribution.length;
-        listener.log(String.format("      Average document per cluster: %.2f", avg));
+        Vector averageCluster = calculateAverageCluster(clusters);
 
-        double sd = 0;
-        for (int count : distribution) {
-            double t = count - avg;
-            sd += t*t;
+        for (int i = 0; i < clusters.size(); i++) {
+            if (i % 20 == 0) {
+                listener.setProgress(i, clusters.size());
+            }
+            double similarity = clusters.get(i).centroid.getSimilarity(averageCluster, Vector.SIMILARITY_COSINE);
+            similarityAverage += similarity;
+            similarities[i] = similarity;
+
+            distribution[i] = clusters.get(i).vectors.size();
+            distributionAverage += clusters.get(i).vectors.size();
         }
 
-        sd = Math.sqrt(sd / (distribution.length - 1));
-        listener.log(String.format("      Standard deviation: %.2f", sd));
-        listener.log(String.format("      Cluster removed: %d", removed));
-        listener.log("");
+        similarityAverage = similarityAverage / similarities.length;
+        distributionAverage = distributionAverage / distribution.length;
+        double similaritySD = 0;
+        double distributionSD = 0;
+        for (int i = 0; i < similarities.length; i++) {
+            double similarity = similarities[i];
+            double diff = similarity - similarityAverage;
+            similaritySD += (diff * diff);
+
+            double distrib = distribution[i];
+            diff = distrib - distributionAverage;
+            distributionSD += (diff * diff);
+        }
+
+        similaritySD = Math.sqrt(similaritySD / (similarities.length - 1));
+        distributionSD = Math.sqrt(distributionSD / (similarities.length - 1));
+
+        listener.log("-------------------------------------------");
+        listener.log(String.format("iteration: %d", iteration, subIteration));
+        listener.log("-------------------------------------------");
+        listener.log(String.format("   Cluster Count: %d", clusters.size()));
+        listener.log(String.format("   Cluster Similarity AVG: %.3f", similarityAverage));
+        listener.log(String.format("   Cluster Similarity SD: %.3f", similaritySD));
+        listener.log(String.format("   Cluster Document Count AVG: %.3f", distributionAverage));
+        listener.log(String.format("   Cluster Document Count SD: %.3f", distributionSD));
+        listener.log(String.format("   Cluster Removed: %d", removedCount));
+
+        String path = Constants.CLUSTERING_DOCUMENT_MESH_INFO_FOLDER + "k-means" + Constants.BACK_SLASH + clusterer.numberOfCluster() + Constants.BACK_SLASH + "report-" + iteration + ".txt";
+        listener.saveLogs(path);
+    }
+
+    private Vector calculateAverageCluster(ArrayList<Cluster> clusters) {
+        Vector result = new Vector();
+
+        for (Cluster cluster : clusters) {
+            result = result.add(cluster.centroid);
+            result.optimize();
+        }
+
+        return result;
     }
 
     private ArrayList<ISubTaskThread> createWorkerThreads(ArrayList<Cluster> clusters, int threadNumber, ArrayList<ArrayList<Vector>> vectorsSplitList) {
@@ -120,14 +162,14 @@ public class ClusterMeSHesTask extends BaseTask {
     }
 
     private String createOutputFolder(int i) {
-        String folder = clusterer.getSavingDestinationPath() + "iteration-" + i + Constants.BACK_SLASH;
+        String folder = clusterer.getSavingDestinationPath() + i + Constants.BACK_SLASH;
         if (!FileUtils.exists(folder)) {
             FileUtils.createDirectory(folder);
         }
         return folder;
     }
 
-    private int[] saveClusterInIteration(ArrayList<Cluster> clusters, String folder, boolean last, ITaskListener listener) {
+    private int[] saveClusterInIteration(ArrayList<Cluster> clusters, String folder, boolean last, ITaskListener listener, int iteration) {
         int[] documentCounts = new int[clusters.size()];
 
         int clusterIndex = 0;
@@ -149,10 +191,10 @@ public class ClusterMeSHesTask extends BaseTask {
         clusters.removeAll(toRemove);
         Cluster.saveClusters(folder + "clusters.bin", clusters);
 
+        printClusterReports(listener, clusters, iteration, 0, toRemove.size());
         for (Cluster cluster : clusters) {
             cluster.clearVectors();
         }
-        printReport(listener, documentCounts, toRemove.size());
 
         if (!last) {
             clusterer.initializeClusteringIteration(clusters);
@@ -360,13 +402,13 @@ public class ClusterMeSHesTask extends BaseTask {
     public Hashtable<String, ArrayList<Object>> getParameters() {
         ArrayList<Object> clusterers = new ArrayList<>();
 
-        clusterers.add(new KMeansClusterer(1000));
-        clusterers.add(new KMeansClusterer(1500));
         clusterers.add(new KMeansClusterer(2000));
-        clusterers.add(new KMeansClusterer(2500));
         clusterers.add(new KMeansClusterer(3000));
-        clusterers.add(new KMeansClusterer(3500));
         clusterers.add(new KMeansClusterer(4000));
+        clusterers.add(new KMeansClusterer(5000));
+        clusterers.add(new KMeansClusterer(6000));
+        clusterers.add(new KMeansClusterer(7000));
+        clusterers.add(new KMeansClusterer(8000));
 
         Hashtable<String, ArrayList<Object>> result = new Hashtable<>();
         result.put("k-means", clusterers);

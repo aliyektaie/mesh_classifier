@@ -27,8 +27,8 @@ public class PostingList {
                 listener.setProgress(i, documentsFeatures.size());
 
             Vector featureSet = documentsFeatures.get(i);
-            for (int j = 0; j < featureSet.featureCount; j++) {
-                FeatureValuePair feature = featureSet.features[j];
+            for (int j = 0; j < featureSet.featureCount(); j++) {
+                FeatureValuePair feature = featureSet.getFeature(j);
                 vocabulary.addAll(result.addTerm(featureSet.identifier, feature));
             }
         }

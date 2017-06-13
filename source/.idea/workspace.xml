@@ -19,58 +19,158 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="600">
-      <file leaf-file-name="MachineLearningClassifierTrainerTask.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/tasks/train/MachineLearningClassifierTrainerTask.java">
+      <file leaf-file-name="EvaluationTask.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/tasks/evaluation/EvaluationTask.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+            <state relative-caret-position="640">
+              <caret line="294" column="23" lean-forward="true" selection-start-line="294" selection-start-column="23" selection-end-line="294" selection-end-column="23" />
               <folding>
-                <element signature="imports" expanded="true" />
+                <element signature="e#15426#15427#0" expanded="true" />
+                <element signature="e#15495#15496#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="SupportVectorMachineTrainer.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/core/ml/implementations/SupportVectorMachineTrainer.java">
+      <file leaf-file-name="DocumentFeatureExtractorTask.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/tasks/train/DocumentFeatureExtractorTask.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="752">
-              <caret line="21" column="20" lean-forward="false" selection-start-line="21" selection-start-column="20" selection-end-line="21" selection-end-column="20" />
+            <state relative-caret-position="8600">
+              <caret line="231" column="21" lean-forward="false" selection-start-line="231" selection-start-column="21" selection-end-line="231" selection-end-column="21" />
               <folding>
-                <element signature="imports" expanded="true" />
+                <marker date="1497283450140" expanded="true" signature="9295:9431" ph="{...}" />
+                <marker date="1497283450140" expanded="true" signature="9295:12025" ph="{...}" />
+                <marker date="1497283450140" expanded="true" signature="9473:9923" ph="{...}" />
+                <marker date="1497283450140" expanded="true" signature="9977:10775" ph="{...}" />
+                <marker date="1497283450140" expanded="true" signature="10819:11427" ph="{...}" />
+                <marker date="1497283450140" expanded="true" signature="11519:11642" ph="{...}" />
+                <marker date="1497283450140" expanded="false" signature="11689:11700" ph=" { " />
+                <marker date="1497283450140" expanded="false" signature="11716:11722" ph=" }" />
+                <marker date="1497283450140" expanded="false" signature="11769:11780" ph=" { " />
+                <marker date="1497283450140" expanded="false" signature="11796:11802" ph=" }" />
+                <marker date="1497283450140" expanded="true" signature="11852:12023" ph="{...}" />
+                <marker date="1497283450140" expanded="true" signature="12067:13607" ph="{...}" />
+                <marker date="1497283450140" expanded="true" signature="12695:12756" ph="{...}" />
+                <marker date="1497283450140" expanded="false" signature="12800:12811" ph=" { " />
+                <marker date="1497283450140" expanded="false" signature="12824:12830" ph=" }" />
+                <marker date="1497283450140" expanded="true" signature="12866:13428" ph="{...}" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="NeuralNetworkTrainer.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/core/ml/implementations/NeuralNetworkTrainer.java">
+      <file leaf-file-name="Sentence.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/core/document/Sentence.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="564">
-              <caret line="12" column="7" lean-forward="false" selection-start-line="12" selection-start-column="7" selection-end-line="12" selection-end-column="7" />
+            <state relative-caret-position="2360">
+              <caret line="62" column="43" lean-forward="false" selection-start-line="62" selection-start-column="43" selection-end-line="62" selection-end-column="43" />
               <folding>
-                <element signature="imports" expanded="true" />
+                <element signature="imports" expanded="false" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="IMachineLearningTrainer.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/core/ml/IMachineLearningTrainer.java">
+      <file leaf-file-name="QuickUMLSFeatureExtractor.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/core/feature_extractor/implementations/QuickUMLSFeatureExtractor.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="329">
-              <caret line="7" column="19" lean-forward="false" selection-start-line="7" selection-start-column="19" selection-end-line="7" selection-end-column="19" />
+            <state relative-caret-position="800">
+              <caret line="140" column="82" lean-forward="true" selection-start-line="140" selection-start-column="82" selection-end-line="140" selection-end-column="82" />
+              <folding>
+                <element signature="e#1441#1442#0" expanded="true" />
+                <element signature="e#1485#1486#0" expanded="true" />
+                <element signature="e#1532#1533#0" expanded="true" />
+                <element signature="e#1575#1576#0" expanded="true" />
+                <element signature="e#1637#1638#0" expanded="true" />
+                <element signature="e#1672#1673#0" expanded="true" />
+                <element signature="e#1718#1719#0" expanded="true" />
+                <element signature="e#1752#1753#0" expanded="true" />
+                <element signature="e#1809#1810#0" expanded="true" />
+                <element signature="e#1836#1837#0" expanded="true" />
+                <element signature="e#1904#1905#0" expanded="true" />
+                <element signature="e#1929#1930#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ClassifierParameter.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/core/model/classification/ClassifierParameter.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="2320">
+              <caret line="62" column="0" lean-forward="false" selection-start-line="62" selection-start-column="0" selection-end-line="62" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="EvaluationOnTrainingDataResult.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/core/ml/EvaluationOnTrainingDataResult.java">
+      <file leaf-file-name="CreateClassifierModelFileTask.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/tasks/evaluation/CreateClassifierModelFileTask.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="235">
-              <caret line="5" column="7" lean-forward="false" selection-start-line="5" selection-start-column="7" selection-end-line="5" selection-end-column="7" />
-              <folding />
+            <state relative-caret-position="600">
+              <caret line="24" column="40" lean-forward="false" selection-start-line="24" selection-start-column="40" selection-end-line="24" selection-end-column="40" />
+              <folding>
+                <marker date="1496136379000" expanded="true" signature="1040:1207" ph="{...}" />
+                <marker date="1496136379000" expanded="false" signature="1258:1269" ph=" { " />
+                <marker date="1496136379000" expanded="false" signature="1288:1294" ph=" }" />
+                <marker date="1496136379000" expanded="false" signature="1345:1356" ph=" { " />
+                <marker date="1496136379000" expanded="false" signature="1394:1400" ph=" }" />
+                <marker date="1496136379000" expanded="true" signature="1467:1597" ph="{...}" />
+                <marker date="1496136379000" expanded="false" signature="1656:1667" ph=" { " />
+                <marker date="1496136379000" expanded="false" signature="1684:1690" ph=" }" />
+                <marker date="1496136379000" expanded="true" signature="1762:1861" ph="{...}" />
+                <marker date="1496136379000" expanded="true" signature="1941:2188" ph="{...}" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="DocumentListUtils.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/utils/DocumentListUtils.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="360">
+              <caret line="11" column="0" lean-forward="false" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
+              <folding>
+                <element signature="imports" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="DocumentFeatureExtractors.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/core/feature_extractor/DocumentFeatureExtractors.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="720">
+              <caret line="20" column="62" lean-forward="false" selection-start-line="20" selection-start-column="62" selection-end-line="20" selection-end-column="62" />
+              <folding>
+                <element signature="imports" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Document.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/core/document/Document.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1080">
+              <caret line="37" column="48" lean-forward="false" selection-start-line="37" selection-start-column="48" selection-end-line="37" selection-end-column="48" />
+              <folding>
+                <element signature="imports" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="MeshPredictors.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/core/predictor/MeshPredictors.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="720">
+              <caret line="24" column="5" lean-forward="false" selection-start-line="24" selection-start-column="5" selection-end-line="24" selection-end-column="5" />
+              <folding>
+                <element signature="imports" expanded="false" />
+                <element signature="e#770#771#0" expanded="false" />
+                <element signature="e#803#804#0" expanded="false" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -88,39 +188,40 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>setLe</find>
-      <find>graph-weights-distribution</find>
-      <find>save</find>
-      <find>getSimi</find>
-      <find>iteration</find>
-      <find>Cluster.sa</find>
-      <find>saveC</find>
-      <find>i</find>
-      <find>identifie</find>
-      <find>identifier</find>
-      <find>&quot;identifier</find>
-      <find>&quot;identifier:</find>
-      <find>, identifier:</find>
-      <find>,identifier:</find>
-      <find>identifier:</find>
-      <find>y</find>
-      <find>year:</find>
-      <find>listener.setCurrentState</find>
-      <find>getSe</find>
-      <find>yea</find>
-      <find>year</find>
-      <find>processing</find>
-      <find>Constants.Core</find>
-      <find>base</find>
-      <find>to</find>
-      <find>toV</find>
-      <find>toVe</find>
-      <find>toVec</find>
-      <find>getMeSHListFilePath</find>
-      <find>Neural</find>
+      <find>kernel</find>
+      <find>kernelTy</find>
+      <find>kernelType</find>
+      <find>return null</find>
+      <find>OneVsAllMode</find>
+      <find>enum OneVsAllMode</find>
+      <find>im</find>
+      <find>impl</find>
+      <find>implements</find>
+      <find>implemScalingModelLearner</find>
+      <find>ScalingModelLearner</find>
+      <find>iScalingModelLearner</find>
+      <find>imScalingModelLearner</find>
+      <find>impScalingModelLearner</find>
+      <find>implScalingModelLearner</find>
+      <find>impleScalingModelLearner</find>
+      <find>implemeScalingModelLearner</find>
+      <find>implemenScalingModelLearner</find>
+      <find>implementScalingModelLearner</find>
+      <find>implementsScalingModelLearner</find>
+      <find>implements ScalingModelLearner</find>
+      <find>getLabels</find>
+      <find>(byte)2</find>
+      <find>public final</find>
+      <find>getFiel</find>
+      <find>considerToken</find>
+      <find>0.5</find>
+      <find>0.1</find>
+      <find>doSampling</find>
+      <find>STANFORD_POS_MODEL_FILE_PATH</find>
     </findStrings>
     <replaceStrings>
       <replace>listener.log</replace>
+      <replace>public</replace>
     </replaceStrings>
     <dirStrings>
       <dir>D:\Projects\MeSH\mesh_classifier\source</dir>
@@ -134,65 +235,65 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/core/model/classification/PostingListEntry.java" />
-        <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/core/model/classification/MeSHClassificationModel.java" />
-        <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/core/model/classification/ClassificationClusterMeSH.java" />
-        <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/tasks/evaluation/ClassifierTask.java" />
-        <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/tasks/preprocess/CreateDatasetMergeTask.java" />
-        <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/core/model/classification/ClassifierParameter.java" />
-        <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/tasks/evaluation/CreateClassifierModelFileTask.java" />
-        <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/tasks/preprocess/PartOfSpeechTaggerTask.java" />
-        <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/core/feature_extractor/IDocumentFeatureExtractor.java" />
-        <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/core/feature_extractor/implementations/UMLSFeatureExtractor.java" />
-        <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/core/feature_extractor/BaseTermFrequencyFeatureExtractor.java" />
-        <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/core/Guid.java" />
-        <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/core/model/classification/ClassificationCluster.java" />
-        <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/core/IMeshPredictor.java" />
-        <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/tasks/train/DocumentFeatureExtractorTask.java" />
-        <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/core/task/BaseTask.java" />
-        <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/tasks/MeSHLabelTermOccurenceInDocumentTask.java" />
-        <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/tasks/experiments/MeSHLabelTermOccurenceInDocumentTask.java" />
-        <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/tasks/experiments/MeSHLabelTermOccurrenceInDocumentTask.java" />
-        <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/core/BaseTask.java" />
-        <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/core/document/DocumentFeatureSet.java" />
-        <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/tasks/experiments/CalculateOveralScoreTask.java" />
         <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/tasks/train/MeSHTermInDocumentTextClassifierTrainerTask.java" />
         <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/core/predictor/IMeshPredictor.java" />
         <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/core/predictor/implementations/ClusterAccuracyEvaluationPredictor.java" />
         <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/tasks/experiments/CalculateMeSHPresenceInClusterDistributionTask.java" />
         <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/tasks/train/AdaptiveMeSHListClustererTask.java" />
-        <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/tasks/evaluation/EvaluationTask.java" />
         <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/tasks/evaluation/EvaluationInputSource.java" />
         <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/core/model/mesh/MeSHUtils.java" />
         <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/utils/PartOfSpeechUtils.java" />
         <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/core/feature_extractor/implementations/BM25FeatureExtractor.java" />
         <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/core/feature_extractor/implementations/TFIDFFeatureExtractor.java" />
         <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/core/feature_extractor/implementations/TopicRankFeatureExtractor.java" />
-        <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/core/model/classification/PostingList.java" />
-        <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/core/model/classification/MeSHClassificationModelBase.java" />
-        <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/core/model/Vector.java" />
         <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/tasks/train/CreateNerualNetworkTrainingFilesTask.java" />
         <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/ui/ITaskListener.java" />
-        <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/ui/MainWindow.java" />
         <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/tasks/train/CreateNeuralNetworkTrainingFilesTask.java" />
-        <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/tasks/train/CreateMachineLearningTrainingFilesTask.java" />
         <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/tasks/train/NeuralNetworkClassifierTrainerTask.java" />
-        <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/Constants.java" />
         <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/tasks/train/IMachineLearningTrainer.java" />
         <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/core/ml/EvaluationOnTrainingDataResult.java" />
         <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/core/ml/NeuralNetworkTrainer.java" />
         <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/tasks/train/NeuralNetworkTrainer.java" />
+        <option value="$PROJECT_DIR$/lib/jlibsvm/jlibsvm-0.911.jar!/edu/berkeley/compbio/jlibsvm/binary/BinaryClassificationSVM.class" />
+        <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/core/ml/IMachineLearningTrainer.java" />
         <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/core/ml/implementations/NeuralNetworkTrainer.java" />
-        <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/core/ml/implementations/SupportVectorMachineTrainer.java" />
+        <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/core/model/classification/MeSHClassificationModelBase.java" />
+        <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/core/model/Vector.java" />
+        <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/core/ml/MachineLearningTrainerUtils.java" />
+        <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/core/model/classification/PostingList.java" />
+        <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/core/predictor/implementations/NeuralNetworkPredictor.java" />
+        <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/core/predictor/implementations/LinearSVMPredictor.java" />
         <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/tasks/train/MachineLearningClassifierTrainerTask.java" />
+        <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/ui/MainWindow.java" />
+        <option value="$PROJECT_DIR$/src/edu/berkeley/compbio/jlibsvm/scaler/ScalingModelLearner.java" />
+        <option value="$PROJECT_DIR$/src/edu/berkeley/compbio/jlibsvm/scaler/NoopScalingModelLearner.java" />
+        <option value="$PROJECT_DIR$/src/edu/berkeley/compbio/jlibsvm/scaler/LinearScalingModelLearner.java" />
+        <option value="$PROJECT_DIR$/src/edu/berkeley/compbio/jlibsvm/util/SparseVector.java" />
+        <option value="$PROJECT_DIR$/src/edu/berkeley/compbio/jlibsvm/ImmutableSvmParameterPoint.java" />
+        <option value="$PROJECT_DIR$/src/edu/berkeley/compbio/jlibsvm/ImmutableSvmParameter.java" />
+        <option value="$PROJECT_DIR$/src/edu/berkeley/compbio/jlibsvm/scaler/ZscoreScalingModelLearner.java" />
+        <option value="$PROJECT_DIR$/src/edu/berkeley/compbio/jlibsvm/binary/BinaryModel.java" />
+        <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/utils/ObjectSerializer.java" />
+        <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/core/ml/implementations/SupportVectorMachineTrainer.java" />
+        <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/core/predictor/MeshPredictors.java" />
+        <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/tasks/train/CreateMachineLearningTrainingFilesTask.java" />
+        <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/Constants.java" />
+        <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/core/document/Document.java" />
+        <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/tasks/train/DocumentFeatureExtractorTask.java" />
+        <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/core/document/Sentence.java" />
+        <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/core/feature_extractor/DocumentFeatureExtractors.java" />
+        <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/core/model/classification/ClassifierParameter.java" />
+        <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/tasks/evaluation/CreateClassifierModelFileTask.java" />
+        <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/core/feature_extractor/implementations/QuickUMLSFeatureExtractor.java" />
+        <option value="$PROJECT_DIR$/src/edu/goergetown/bioasq/tasks/evaluation/EvaluationTask.java" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="-13" />
-    <option name="y" value="-13" />
-    <option name="width" value="3866" />
-    <option name="height" value="2126" />
+    <option name="x" value="-14" />
+    <option name="y" value="-14" />
+    <option name="width" value="3868" />
+    <option name="height" value="2101" />
   </component>
   <component name="ProjectView">
     <navigator currentView="ProjectPane" proportions="" version="1">
@@ -209,8 +310,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
-      <pane id="Scratches" />
+      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -251,6 +351,10 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="edu" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="bioasq" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
@@ -269,25 +373,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="bioasq" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="utils" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="mesh_classifier" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="source" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
+              <option name="myItemId" value="edu" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
@@ -317,6 +403,10 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="edu" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="bioasq" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
@@ -329,7 +419,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="MachineLearningClassifierTrainerTask.java" />
+              <option name="myItemId" value="DocumentFeatureExtractorTask.java" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.ClassesTreeStructureProvider$PsiClassOwnerTreeNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -347,33 +437,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="bioasq" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="tasks" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="train" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="CreateMachineLearningTrainingFilesTask.java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.ClassesTreeStructureProvider$PsiClassOwnerTreeNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="mesh_classifier" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="source" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
+              <option name="myItemId" value="edu" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
@@ -399,6 +463,10 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="edu" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="bioasq" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
@@ -421,6 +489,10 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="edu" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="bioasq" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
@@ -429,7 +501,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="ml" />
+              <option name="myItemId" value="feature_extractor" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -447,6 +519,10 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="edu" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="bioasq" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
@@ -455,7 +531,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="ml" />
+              <option name="myItemId" value="feature_extractor" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
@@ -473,23 +549,31 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="lib" />
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="edu" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
         </subPane>
       </pane>
-      <pane id="PackagesPane" />
+      <pane id="Scope" />
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="settings.editor.selected.configurable" value="reference.settingsdialog.IDE.editor.colors.Font" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/lib/neuroph-2.93b/neuroph-adapters-2.93.jar!/" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/lib/jlibsvm/trees-1.031.jar!/" />
     <property name="project.structure.last.edited" value="Libraries" />
-    <property name="project.structure.proportion" value="0.0" />
+    <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
-    <property name="SearchEverywhereHistoryKey" value="cons&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/Constants.java&#10;main&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/ui/MainWindow.java&#10;FileU&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/utils/FileUtils.java&#10;bm25&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/core/feature_extractor/implementations/BM25FeatureExtractor.java&#10;ne&#9;FILE&#9;file:///media/yektaie/Files/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/tasks/train/CreateNerualNetworkTrainingFilesTask.java&#10;top&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/core/feature_extractor/implementations/TopicRankFeatureExtractor.java&#10;TFI&#9;PSI&#9;JAVA://edu.goergetown.bioasq.core.feature_extractor.implementations.TFIDFFeatureExtractor&#10;con&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/Constants.java&#10;BM&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/core/feature_extractor/implementations/BM25FeatureExtractor.java&#10;extr&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/tasks/train/DocumentFeatureExtractorTask.java&#10;crea&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/tasks/evaluation/CreateClassifierModelFileTask.java&#10;DocuFe&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/core/document/DocumentFeatureSet.java&#10;Classi&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/core/model/classification/ClassificationClusterMeSH.java&#10;Cons&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/Constants.java&#10;mai&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/ui/MainWindow.java&#10;Eva&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/tasks/evaluation/EvaluationTask.java&#10;eva&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/tasks/evaluation/EvaluationTask.java&#10;Adap&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/tasks/train/AdaptiveMeSHListClustererTask.java&#10;Clus&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/core/predictor/implementations/ClusterAccuracyEvaluationPredictor.java&#10;Con&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/Constants.java&#10;ma&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/ui/MainWindow.java&#10;Bio&#9;PSI&#9;JAVA://edu.goergetown.bioasq.core.BioAsqEntry&#10;BaseTa&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/core/BaseTask.java&#10;Sub&#9;PSI&#9;JAVA://edu.goergetown.bioasq.core.task.SubTaskInfo&#10;ada&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/tasks/train/AdaptiveMeSHListClustererTask.java&#10;Main&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/ui/MainWindow.java&#10;IM&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/core/predictor/IMeshPredictor.java&#10;Bina&#9;PSI&#9;JAVA://edu.goergetown.bioasq.utils.BinaryBuffer&#10;Doc&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/tasks/train/DocumentFeatureExtractorTask.java&#10;adap&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/tasks/train/AdaptiveMeSHListClustererTask.java&#10;Fea&#9;FILE&#9;file:///media/yektaie/Files/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/core/document/DocumentFeatureSet.java&#10;Me&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/tasks/train/AdaptiveMeSHListClustererTask.java&#10;زمعس&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/core/model/Cluster.java&#10;Pro&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/Program.java&#10;km&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/core/model/implementation/KMeansClusterer.java&#10;clus&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/core/model/Cluster.java&#10;MeS&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/core/model/mesh/MeSHUtils.java&#10;base&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/core/BaseTask.java&#10;mesh&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/core/model/mesh/MeSHGraph.java&#10;MeSHGr&#9;PSI&#9;JAVA://edu.goergetown.bioasq.core.model.mesh.MeSHGraph&#10;vecto&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/core/model/Vector.java&#10;vect&#9;PSI&#9;JAVA://edu.goergetown.bioasq.core.model.Vector" />
+    <property name="SearchEverywhereHistoryKey" value="cons&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/Constants.java&#10;eval&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/tasks/evaluation/EvaluationTask.java&#10;Bina&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/berkeley/compbio/jlibsvm/binary/BinaryModel.java&#10;suppo&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/core/ml/implementations/SupportVectorMachineTrainer.java&#10;Sparse&#9;PSI&#9;JAVA://edu.berkeley.compbio.jlibsvm.util.SparseVector&#10;Line&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/berkeley/compbio/jlibsvm/scaler/LinearScalingModelLearner.java&#10;MultiClassMo&#9;PSI&#9;JAVA://edu.berkeley.compbio.jlibsvm.multi.MultiClassModel&#10;Solu&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/berkeley/compbio/jlibsvm/SolutionModel.java&#10;Cons&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/Constants.java&#10;main&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/ui/MainWindow.java&#10;KernelF&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/berkeley/compbio/jlibsvm/kernel/KernelFunction.java&#10;Linea&#9;PSI&#9;JAVA://edu.berkeley.compbio.jlibsvm.kernel.LinearKernel&#10;ma&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/ui/MainWindow.java&#10;evalua&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/tasks/evaluation/EvaluationTask.java&#10;Predictors&#9;PSI&#9;JAVA://edu.goergetown.bioasq.core.predictor.MeshPredictors&#10;Vecto&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/core/model/Vector.java&#10;Evalu&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/tasks/evaluation/EvaluationTask.java&#10;neu&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/core/ml/implementations/NeuralNetworkTrainer.java&#10;neur&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/core/ml/implementations/NeuralNetworkTrainer.java&#10;FileU&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/utils/FileUtils.java&#10;bm25&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/core/feature_extractor/implementations/BM25FeatureExtractor.java&#10;ne&#9;FILE&#9;file:///media/yektaie/Files/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/tasks/train/CreateNerualNetworkTrainingFilesTask.java&#10;top&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/core/feature_extractor/implementations/TopicRankFeatureExtractor.java&#10;TFI&#9;PSI&#9;JAVA://edu.goergetown.bioasq.core.feature_extractor.implementations.TFIDFFeatureExtractor&#10;con&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/Constants.java&#10;BM&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/core/feature_extractor/implementations/BM25FeatureExtractor.java&#10;extr&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/tasks/train/DocumentFeatureExtractorTask.java&#10;crea&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/tasks/evaluation/CreateClassifierModelFileTask.java&#10;DocuFe&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/core/document/DocumentFeatureSet.java&#10;Classi&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/core/model/classification/ClassificationClusterMeSH.java&#10;mai&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/ui/MainWindow.java&#10;Eva&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/tasks/evaluation/EvaluationTask.java&#10;eva&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/tasks/evaluation/EvaluationTask.java&#10;Adap&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/tasks/train/AdaptiveMeSHListClustererTask.java&#10;Clus&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/core/predictor/implementations/ClusterAccuracyEvaluationPredictor.java&#10;Con&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/Constants.java&#10;Bio&#9;PSI&#9;JAVA://edu.goergetown.bioasq.core.BioAsqEntry&#10;BaseTa&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/core/BaseTask.java&#10;Sub&#9;PSI&#9;JAVA://edu.goergetown.bioasq.core.task.SubTaskInfo&#10;ada&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/tasks/train/AdaptiveMeSHListClustererTask.java&#10;Main&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/ui/MainWindow.java&#10;IM&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/core/predictor/IMeshPredictor.java&#10;Doc&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/tasks/train/DocumentFeatureExtractorTask.java&#10;adap&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/tasks/train/AdaptiveMeSHListClustererTask.java&#10;Fea&#9;FILE&#9;file:///media/yektaie/Files/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/core/document/DocumentFeatureSet.java&#10;Me&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/tasks/train/AdaptiveMeSHListClustererTask.java&#10;زمعس&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/core/model/Cluster.java&#10;Pro&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/Program.java&#10;km&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/core/model/implementation/KMeansClusterer.java&#10;clus&#9;FILE&#9;file://D:/Projects/MeSH/mesh_classifier/source/src/edu/goergetown/bioasq/core/model/Cluster.java" />
     <property name="extract.method.default.visibility" value="private" />
+    <property name="Downloaded.Files.Path.Enabled" value="true" />
+    <property name="Repository.Attach.JavaDocs" value="false" />
+    <property name="Repository.Attach.Sources" value="false" />
   </component>
   <component name="RecentsManager">
     <key name="CreateClassDialog.RecentsKey">
@@ -782,26 +866,25 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-13" y="-13" width="3866" height="2126" extended-state="7" />
-    <editor active="true" />
+    <frame x="-14" y="-14" width="3868" height="2101" extended-state="6" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32943055" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32783395" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32689294" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32589048" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2296875" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Run with VisualVM" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32971185" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.20651041" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Run with VisualVM" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3296119" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3462141" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.29399255" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Debug with VisualVM" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -809,7 +892,7 @@
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Fluid" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32894042" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3283582" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
   <component name="VcsContentAnnotationSettings">
@@ -836,13 +919,31 @@
           <option name="timeStamp" value="59" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/edu/goergetown/bioasq/tasks/train/MachineLearningClassifierTrainerTask.java</url>
-          <line>178</line>
+          <url>file://$PROJECT_DIR$/src/edu/goergetown/bioasq/core/predictor/implementations/LinearSVMPredictor.java</url>
+          <line>50</line>
           <properties />
-          <option name="timeStamp" value="89" />
+          <option name="timeStamp" value="119" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/edu/goergetown/bioasq/core/feature_extractor/implementations/QuickUMLSFeatureExtractor.java</url>
+          <line>224</line>
+          <properties />
+          <option name="timeStamp" value="181" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/edu/goergetown/bioasq/core/feature_extractor/implementations/QuickUMLSFeatureExtractor.java</url>
+          <line>71</line>
+          <properties />
+          <option name="timeStamp" value="182" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/edu/goergetown/bioasq/tasks/evaluation/EvaluationTask.java</url>
+          <line>296</line>
+          <properties />
+          <option name="timeStamp" value="183" />
         </line-breakpoint>
       </breakpoints>
-      <option name="time" value="91" />
+      <option name="time" value="184" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -851,335 +952,262 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/tasks/train/ClusterMeSHesTask.java">
+    <entry file="jar://$PROJECT_DIR$/lib/jlibsvm/jlibsvm-0.911.jar!/edu/berkeley/compbio/jlibsvm/binary/BinaryModel.class" />
+    <entry file="jar://$PROJECT_DIR$/lib/jlibsvm/jlibsvm-0.911.jar!/edu/berkeley/compbio/jlibsvm/binary/AlphaModel.class" />
+    <entry file="jar://$PROJECT_DIR$/lib/jlibsvm/jlibsvm-0.911.jar!/edu/berkeley/compbio/jlibsvm/binary/MutableBinaryClassificationProblemImpl.class" />
+    <entry file="jar://$PROJECT_DIR$/lib/jlibsvm/jlibsvm-0.911.jar!/edu/berkeley/compbio/jlibsvm/binary/BinarySolver.class" />
+    <entry file="jar://$PROJECT_DIR$/lib/jlibsvm/jlibsvm-0.911.jar!/edu/berkeley/compbio/jlibsvm/binary/C_SVC.class" />
+    <entry file="jar://$PROJECT_DIR$/lib/jlibsvm/jlibsvm-0.911.jar!/edu/berkeley/compbio/jlibsvm/binary/BinaryClassificationSVM.class" />
+    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/core/predictor/implementations/ClusterAccuracyEvaluationPredictor.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="405">
-          <caret line="278" column="132" lean-forward="true" selection-start-line="278" selection-start-column="8" selection-end-line="278" selection-end-column="132" />
+        <state relative-caret-position="1013">
+          <caret line="76" column="0" lean-forward="false" selection-start-line="43" selection-start-column="0" selection-end-line="76" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/core/model/classification/PostingListEntry.java">
+    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/core/ml/IMachineLearningTrainer.java" />
+    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/core/ml/implementations/NeuralNetworkTrainer.java" />
+    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/core/document/DocumentFeatureSet.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="328">
-          <caret line="8" column="28" lean-forward="false" selection-start-line="8" selection-start-column="28" selection-end-line="8" selection-end-column="28" />
+        <state relative-caret-position="11750">
+          <caret line="265" column="36" lean-forward="false" selection-start-line="265" selection-start-column="36" selection-end-line="265" selection-end-column="36" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/tasks/preprocess/CreateDatasetMergeTask.java">
+    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/core/model/classification/MeSHClassificationModelBase.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1350">
-          <caret line="37" column="85" lean-forward="false" selection-start-line="37" selection-start-column="85" selection-end-line="37" selection-end-column="85" />
+        <state relative-caret-position="0">
+          <caret line="109" column="0" lean-forward="false" selection-start-line="109" selection-start-column="0" selection-end-line="109" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/core/model/Vector.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-19">
+          <caret line="945" column="22" lean-forward="false" selection-start-line="945" selection-start-column="22" selection-end-line="945" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/core/ml/MachineLearningTrainerUtils.java" />
+    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/core/model/classification/PostingList.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="51" column="5" lean-forward="false" selection-start-line="51" selection-start-column="5" selection-end-line="51" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_131/src.zip!/java/util/ArrayList.java" />
+    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/core/predictor/implementations/NeuralNetworkPredictor.java" />
+    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/core/predictor/implementations/LinearSVMPredictor.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="836">
+          <caret line="22" column="60" lean-forward="false" selection-start-line="22" selection-start-column="60" selection-end-line="22" selection-end-column="60" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/edu/berkeley/compbio/jlibsvm/kernel/KernelFunction.java" />
+    <entry file="file://$PROJECT_DIR$/src/edu/berkeley/compbio/jlibsvm/kernel/LinearKernel.java" />
+    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/ui/MainWindow.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="988">
+          <caret line="37" column="21" lean-forward="false" selection-start-line="37" selection-start-column="21" selection-end-line="37" selection-end-column="21" />
+          <folding>
+            <element signature="imports" expanded="false" />
+            <element signature="e#6319#6320#0" expanded="false" />
+            <element signature="e#6367#6368#0" expanded="false" />
+            <element signature="e#8045#8046#0" expanded="false" />
+            <element signature="e#8109#8110#0" expanded="false" />
+            <element signature="e#9819#9820#0" expanded="false" />
+            <element signature="e#9859#9860#0" expanded="false" />
+            <element signature="e#10649#10650#0" expanded="false" />
+            <element signature="e#10708#10709#0" expanded="false" />
+            <element signature="e#10746#10747#0" expanded="false" />
+            <element signature="e#10789#10790#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/tasks/train/MachineLearningClassifierTrainerTask.java" />
+    <entry file="file://$PROJECT_DIR$/src/edu/berkeley/compbio/jlibsvm/SolutionModel.java" />
+    <entry file="file://$PROJECT_DIR$/src/edu/berkeley/compbio/jlibsvm/scaler/NoopScalingModelLearner.java" />
+    <entry file="file://$PROJECT_DIR$/src/edu/berkeley/compbio/jlibsvm/scaler/LinearScalingModelLearner.java" />
+    <entry file="file://$PROJECT_DIR$/src/edu/berkeley/compbio/jlibsvm/scaler/ScalingModelLearner.java" />
+    <entry file="file://$PROJECT_DIR$/src/edu/berkeley/compbio/jlibsvm/binary/BinaryClassificationSVM.java" />
+    <entry file="file://$PROJECT_DIR$/src/edu/berkeley/compbio/jlibsvm/binary/AlphaModel.java" />
+    <entry file="file://$PROJECT_DIR$/src/edu/berkeley/compbio/jlibsvm/util/SparseVector.java" />
+    <entry file="file://$PROJECT_DIR$/src/edu/berkeley/compbio/jlibsvm/ImmutableSvmParameterPoint.java" />
+    <entry file="file://$PROJECT_DIR$/src/edu/berkeley/compbio/jlibsvm/ImmutableSvmParameter.java" />
+    <entry file="file://$PROJECT_DIR$/src/edu/berkeley/compbio/jlibsvm/multi/MultiClassModel.java" />
+    <entry file="file://$PROJECT_DIR$/src/edu/berkeley/compbio/jlibsvm/scaler/ZscoreScalingModelLearner.java" />
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_131/src.zip!/java/lang/Float.java" />
+    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/utils/BinaryBuffer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="26486">
+          <caret line="718" column="22" lean-forward="false" selection-start-line="718" selection-start-column="22" selection-end-line="718" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/utils/FileUtils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2774">
+          <caret line="74" column="0" lean-forward="false" selection-start-line="74" selection-start-column="0" selection-end-line="74" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/edu/berkeley/compbio/jlibsvm/binary/BinaryModel.java" />
+    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/utils/ObjectSerializer.java" />
+    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/core/ml/implementations/SupportVectorMachineTrainer.java" />
+    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/tasks/train/MeSHTermInDocumentTextClassifierTrainerTask.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="5945">
+          <caret line="164" column="25" lean-forward="false" selection-start-line="164" selection-start-column="25" selection-end-line="164" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/tasks/train/CreateMachineLearningTrainingFilesTask.java" />
+    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/Constants.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="697">
+          <caret line="17" column="44" lean-forward="false" selection-start-line="17" selection-start-column="16" selection-end-line="17" selection-end-column="44" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/tasks/preprocess/PartOfSpeechTaggerTask.java">
+    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/tasks/train/DocumentFeatureExtractorTask.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="50">
-          <caret line="261" column="1" lean-forward="true" selection-start-line="261" selection-start-column="1" selection-end-line="261" selection-end-column="1" />
+        <state relative-caret-position="8600">
+          <caret line="231" column="21" lean-forward="false" selection-start-line="231" selection-start-column="21" selection-end-line="231" selection-end-column="21" />
+          <folding>
+            <marker date="1497283450140" expanded="true" signature="9295:9431" ph="{...}" />
+            <marker date="1497283450140" expanded="true" signature="9295:12025" ph="{...}" />
+            <marker date="1497283450140" expanded="true" signature="9473:9923" ph="{...}" />
+            <marker date="1497283450140" expanded="true" signature="9977:10775" ph="{...}" />
+            <marker date="1497283450140" expanded="true" signature="10819:11427" ph="{...}" />
+            <marker date="1497283450140" expanded="true" signature="11519:11642" ph="{...}" />
+            <marker date="1497283450140" expanded="false" signature="11689:11700" ph=" { " />
+            <marker date="1497283450140" expanded="false" signature="11716:11722" ph=" }" />
+            <marker date="1497283450140" expanded="false" signature="11769:11780" ph=" { " />
+            <marker date="1497283450140" expanded="false" signature="11796:11802" ph=" }" />
+            <marker date="1497283450140" expanded="true" signature="11852:12023" ph="{...}" />
+            <marker date="1497283450140" expanded="true" signature="12067:13607" ph="{...}" />
+            <marker date="1497283450140" expanded="true" signature="12695:12756" ph="{...}" />
+            <marker date="1497283450140" expanded="false" signature="12800:12811" ph=" { " />
+            <marker date="1497283450140" expanded="false" signature="12824:12830" ph=" }" />
+            <marker date="1497283450140" expanded="true" signature="12866:13428" ph="{...}" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/core/feature_extractor/IDocumentFeatureExtractor.java">
+    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/core/document/Sentence.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="550">
-          <caret line="15" column="0" lean-forward="false" selection-start-line="15" selection-start-column="0" selection-end-line="15" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/core/feature_extractor/implementations/UMLSFeatureExtractor.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="265">
-          <caret line="135" column="0" lean-forward="false" selection-start-line="135" selection-start-column="0" selection-end-line="135" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/core/feature_extractor/BaseTermFrequencyFeatureExtractor.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="50">
-          <caret line="1" column="0" lean-forward="true" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/core/Guid.java" />
-    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/core/model/classification/ClassificationCluster.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="47" column="15" lean-forward="false" selection-start-line="47" selection-start-column="15" selection-end-line="47" selection-end-column="15" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/utils/BinaryBuffer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="268" column="55" lean-forward="false" selection-start-line="268" selection-start-column="20" selection-end-line="268" selection-end-column="55" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/core/document/IDocumentFeatureSetLoaderCallback.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="330">
-          <caret line="6" column="96" lean-forward="true" selection-start-line="6" selection-start-column="4" selection-end-line="6" selection-end-column="96" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/core/task/SubTaskInfo.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="275">
-          <caret line="5" column="13" lean-forward="false" selection-start-line="5" selection-start-column="13" selection-end-line="5" selection-end-column="24" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/core/SubTaskInfo.java" />
-    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/core/BaseTask.java" />
-    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/core/BioAsqEntry.java" />
-    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/tasks/train/MeSHTermInDocumentTextClassifierTrainerTask.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="7250">
-          <caret line="164" column="17" lean-forward="false" selection-start-line="164" selection-start-column="17" selection-end-line="164" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/tasks/experiments/CalculateOveralScoreTask.java" />
-    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/core/model/Cluster.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="7250">
-          <caret line="157" column="9" lean-forward="false" selection-start-line="157" selection-start-column="9" selection-end-line="157" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/core/task/BaseTask.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3500">
-          <caret line="77" column="0" lean-forward="false" selection-start-line="77" selection-start-column="0" selection-end-line="77" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/core/predictor/IMeshPredictor.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="600">
-          <caret line="16" column="33" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="18" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/core/predictor/implementations/ClusterAccuracyEvaluationPredictor.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1050">
-          <caret line="29" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="77" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/tasks/train/AdaptiveMeSHListClustererTask.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1691">
-          <caret line="280" column="41" lean-forward="false" selection-start-line="280" selection-start-column="41" selection-end-line="280" selection-end-column="41" />
+        <state relative-caret-position="2360">
+          <caret line="62" column="43" lean-forward="false" selection-start-line="62" selection-start-column="43" selection-end-line="62" selection-end-column="43" />
+          <folding>
+            <element signature="imports" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/core/model/classification/ClassifierParameter.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2500">
-          <caret line="53" column="5" lean-forward="false" selection-start-line="53" selection-start-column="5" selection-end-line="53" selection-end-column="5" />
+        <state relative-caret-position="2320">
+          <caret line="62" column="0" lean-forward="false" selection-start-line="62" selection-start-column="0" selection-end-line="62" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/tasks/experiments/CalculateMeSHPresenceInClusterDistributionTask.java" />
-    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/core/model/classification/ClassificationClusterMeSH.java">
+    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/tasks/evaluation/CreateClassifierModelFileTask.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="200">
-          <caret line="4" column="0" lean-forward="false" selection-start-line="4" selection-start-column="0" selection-end-line="4" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/tasks/experiments/MeSHLabelTermOccurrenceInDocumentTask.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state relative-caret-position="600">
+          <caret line="24" column="40" lean-forward="false" selection-start-line="24" selection-start-column="40" selection-end-line="24" selection-end-column="40" />
           <folding>
-            <element signature="e#5146#5147#0" expanded="true" />
-            <element signature="e#5185#5186#0" expanded="true" />
+            <marker date="1496136379000" expanded="true" signature="1040:1207" ph="{...}" />
+            <marker date="1496136379000" expanded="false" signature="1258:1269" ph=" { " />
+            <marker date="1496136379000" expanded="false" signature="1288:1294" ph=" }" />
+            <marker date="1496136379000" expanded="false" signature="1345:1356" ph=" { " />
+            <marker date="1496136379000" expanded="false" signature="1394:1400" ph=" }" />
+            <marker date="1496136379000" expanded="true" signature="1467:1597" ph="{...}" />
+            <marker date="1496136379000" expanded="false" signature="1656:1667" ph=" { " />
+            <marker date="1496136379000" expanded="false" signature="1684:1690" ph=" }" />
+            <marker date="1496136379000" expanded="true" signature="1762:1861" ph="{...}" />
+            <marker date="1496136379000" expanded="true" signature="1941:2188" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/utils/DocumentListUtils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="360">
+          <caret line="11" column="0" lean-forward="false" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/core/feature_extractor/DocumentFeatureExtractors.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="720">
+          <caret line="20" column="62" lean-forward="false" selection-start-line="20" selection-start-column="62" selection-end-line="20" selection-end-column="62" />
+          <folding>
+            <element signature="imports" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/core/document/Document.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1080">
+          <caret line="37" column="48" lean-forward="false" selection-start-line="37" selection-start-column="48" selection-end-line="37" selection-end-column="48" />
+          <folding>
+            <element signature="imports" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/core/predictor/MeshPredictors.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="720">
+          <caret line="24" column="5" lean-forward="false" selection-start-line="24" selection-start-column="5" selection-end-line="24" selection-end-column="5" />
+          <folding>
+            <element signature="imports" expanded="false" />
+            <element signature="e#770#771#0" expanded="false" />
+            <element signature="e#803#804#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/core/feature_extractor/implementations/QuickUMLSFeatureExtractor.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="800">
+          <caret line="140" column="82" lean-forward="true" selection-start-line="140" selection-start-column="82" selection-end-line="140" selection-end-column="82" />
+          <folding>
+            <element signature="e#1441#1442#0" expanded="true" />
+            <element signature="e#1485#1486#0" expanded="true" />
+            <element signature="e#1532#1533#0" expanded="true" />
+            <element signature="e#1575#1576#0" expanded="true" />
+            <element signature="e#1637#1638#0" expanded="true" />
+            <element signature="e#1672#1673#0" expanded="true" />
+            <element signature="e#1718#1719#0" expanded="true" />
+            <element signature="e#1752#1753#0" expanded="true" />
+            <element signature="e#1809#1810#0" expanded="true" />
+            <element signature="e#1836#1837#0" expanded="true" />
+            <element signature="e#1904#1905#0" expanded="true" />
+            <element signature="e#1929#1930#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/tasks/evaluation/EvaluationTask.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="11150">
-          <caret line="245" column="0" lean-forward="false" selection-start-line="245" selection-start-column="0" selection-end-line="245" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/tasks/evaluation/EvaluationInputSource.java" />
-    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/core/document/DocumentFeatureSet.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="7300">
-          <caret line="159" column="0" lean-forward="false" selection-start-line="159" selection-start-column="0" selection-end-line="159" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/tasks/evaluation/CreateClassifierModelFileTask.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1050">
-          <caret line="30" column="43" lean-forward="false" selection-start-line="30" selection-start-column="43" selection-end-line="30" selection-end-column="43" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/core/model/mesh/MeSHUtils.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="750">
-          <caret line="15" column="19" lean-forward="false" selection-start-line="15" selection-start-column="19" selection-end-line="15" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/utils/PartOfSpeechUtils.java" />
-    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/tasks/train/DocumentFeatureExtractorTask.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="9061">
-          <caret line="240" column="16" lean-forward="false" selection-start-line="240" selection-start-column="16" selection-end-line="240" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/core/feature_extractor/implementations/TFIDFFeatureExtractor.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="533">
-          <caret line="17" column="0" lean-forward="false" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/core/feature_extractor/implementations/TopicRankFeatureExtractor.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="861">
-          <caret line="34" column="0" lean-forward="false" selection-start-line="34" selection-start-column="0" selection-end-line="34" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/core/model/FeatureValuePair.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="100">
-          <caret line="2" column="13" lean-forward="false" selection-start-line="2" selection-start-column="13" selection-end-line="2" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/core/model/classification/MeSHClassificationModelBase.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2911">
-          <caret line="93" column="56" lean-forward="false" selection-start-line="93" selection-start-column="56" selection-end-line="93" selection-end-column="56" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/core/model/classification/PostingList.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="902">
-          <caret line="29" column="50" lean-forward="false" selection-start-line="29" selection-start-column="50" selection-end-line="29" selection-end-column="50" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/core/model/Vector.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="574">
-          <caret line="16" column="10" lean-forward="false" selection-start-line="16" selection-start-column="10" selection-end-line="16" selection-end-column="10" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/core/feature_extractor/implementations/BM25FeatureExtractor.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="765">
-          <caret line="21" column="0" lean-forward="false" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/utils/FileUtils.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2340">
-          <caret line="53" column="9" lean-forward="false" selection-start-line="53" selection-start-column="9" selection-end-line="53" selection-end-column="9" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/ui/ITaskListener.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="540">
-          <caret line="12" column="23" lean-forward="false" selection-start-line="12" selection-start-column="23" selection-end-line="12" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/ui/MainWindow.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="13590">
-          <caret line="319" column="0" lean-forward="false" selection-start-line="319" selection-start-column="0" selection-end-line="319" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/tasks/train/CreateMachineLearningTrainingFilesTask.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="495">
-          <caret line="31" column="0" lean-forward="true" selection-start-line="31" selection-start-column="0" selection-end-line="31" selection-end-column="0" />
+        <state relative-caret-position="640">
+          <caret line="294" column="23" lean-forward="true" selection-start-line="294" selection-start-column="23" selection-end-line="294" selection-end-column="23" />
           <folding>
-            <element signature="e#14056#14057#0" expanded="true" />
-            <element signature="e#14119#14120#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/Constants.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="686">
-          <caret line="16" column="32" lean-forward="false" selection-start-line="16" selection-start-column="32" selection-end-line="16" selection-end-column="32" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/core/ml/IMachineLearningTrainer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="329">
-          <caret line="7" column="19" lean-forward="false" selection-start-line="7" selection-start-column="19" selection-end-line="7" selection-end-column="19" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/core/ml/EvaluationOnTrainingDataResult.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="235">
-          <caret line="5" column="7" lean-forward="false" selection-start-line="5" selection-start-column="7" selection-end-line="5" selection-end-column="7" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/tasks/train/NeuralNetworkTrainer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/core/ml/implementations/NeuralNetworkTrainer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="564">
-          <caret line="12" column="7" lean-forward="false" selection-start-line="12" selection-start-column="7" selection-end-line="12" selection-end-column="7" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/core/ml/implementations/SupportVectorMachineTrainer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="752">
-          <caret line="21" column="20" lean-forward="false" selection-start-line="21" selection-start-column="20" selection-end-line="21" selection-end-column="20" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/edu/goergetown/bioasq/tasks/train/MachineLearningClassifierTrainerTask.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="e#15426#15427#0" expanded="true" />
+            <element signature="e#15495#15496#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1249,7 +1277,7 @@
       </state>
       <state key="ProjectLibrariesConfigurable.UI">
         <settings>
-          <last-edited>ajt-2.9</last-edited>
+          <last-edited>annotations-7.0.3</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>

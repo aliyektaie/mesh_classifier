@@ -12,6 +12,7 @@ import edu.goergetown.bioasq.utils.FileUtils;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Random;
 
 /**
  * Created by Yektaie on 6/3/2017.
@@ -21,9 +22,9 @@ public class MachineLearningClassifierTrainerTask extends BaseTask {
     private static IMachineLearningTrainer SVM_TRAINER = new SupportVectorMachineTrainer();
 
     private SubTaskInfo TRAINER_TASK = new SubTaskInfo("", 1000);
-    private IMachineLearningTrainer trainer = NEURAL_NETWORK_TRAINER;
+    private IMachineLearningTrainer trainer = SVM_TRAINER;
 
-    private String LIST_OF_INPUT_FILE_TO_TRAIN = "d:\\file1.txt";
+    private String LIST_OF_INPUT_FILE_TO_TRAIN = "D:\\File 1 (Linear SVM).txt";
 
     @Override
     public void process(ITaskListener listener) {
@@ -130,6 +131,8 @@ public class MachineLearningClassifierTrainerTask extends BaseTask {
 }
 
 class TrainerThread extends Thread implements ISubTaskThread {
+    private static final int SAMPLE_COUNT = 8000;
+    private static final int SAMPLE_COUNT_INCREASE = 4000;
     private boolean finished = false;
     private double progress = 0;
     public ArrayList<String> files = new ArrayList<>();
@@ -141,26 +144,124 @@ class TrainerThread extends Thread implements ISubTaskThread {
         for (int i = 0; i < files.size(); i++) {
             progress = i * 100.0 / files.size();
 
-            String[] lines = FileUtils.readAllLines(files.get(i));
-            int inputCount = lines[0].split(" ").length - 1;
+            String[] fileContent = FileUtils.readAllLines(files.get(i));
+            int iteration = 0;
 
-            double[][] input = new double[lines.length][];
-            double[][] output = new double[lines.length][];
-            populateInputsAndOutputs(lines, inputCount, input, output);
+            while (iteration < 100 && (SAMPLE_COUNT + iteration * SAMPLE_COUNT_INCREASE) < fileContent.length || fileContent.length < SAMPLE_COUNT) {
+                String[] lines = sampleData(fileContent, SAMPLE_COUNT + iteration * SAMPLE_COUNT_INCREASE);
+                int inputCount = lines[0].split(" ").length - 1;
 
-            String mesh = files.get(i);
-            mesh = mesh.substring(mesh.lastIndexOf(Constants.BACK_SLASH) + 1);
-            mesh = mesh.replace(".data", "");
+                double[][] input = new double[lines.length][];
+                double[][] output = new double[lines.length][];
+                populateInputsAndOutputs(lines, inputCount, input, output);
 
-            String savePath = Constants.TEXT_CLASSIFIER_FOLDER + trainer.getTitle() + Constants.BACK_SLASH + mesh + trainer.getFileExtension();
-            EvaluationOnTrainingDataResult trainResult = trainer.train(input, output, inputCount, savePath);
+                String mesh = files.get(i);
+                mesh = mesh.substring(mesh.lastIndexOf(Constants.BACK_SLASH) + 1);
+                mesh = mesh.replace(".data", "");
 
-            double accuracy = trainResult.correct;
-            accuracy = accuracy / (trainResult.correct + trainResult.wrong);
-            listener.logWithoutTime(String.format("%s,%d,%d,%.3f", mesh, trainResult.correct, trainResult.wrong, accuracy));
+                String savePath = Constants.TEXT_CLASSIFIER_FOLDER + trainer.getTitle() + Constants.BACK_SLASH + mesh + trainer.getFileExtension();
+                EvaluationOnTrainingDataResult trainResult = trainer.train(input, output, inputCount, savePath);
+
+                double accuracy = trainResult.correct;
+                accuracy = accuracy / (trainResult.correct + trainResult.wrong);
+
+                if (accuracy > 0.9 || fileContent.length < SAMPLE_COUNT) {
+                    listener.logWithoutTime(String.format("%s,%d,%d,%.3f", mesh, trainResult.correct, trainResult.wrong, accuracy));
+                    if (iteration > 0)
+                        listener.logWithoutTime("----------------------------------------------------------------");
+                    break;
+                } else {
+                    listener.logWithoutTime(String.format("%s,%d,%d,%.3f   ->   Retrying [" + iteration + "]", mesh, trainResult.correct, trainResult.wrong, accuracy));
+                    iteration++;
+                }
+            }
         }
 
         finished = true;
+    }
+
+    private String[] sampleData(String[] lines, int sampleCount) {
+        if (lines.length <= sampleCount) {
+            return lines;
+        }
+
+        try {
+            String[] result = new String[sampleCount];
+            int positiveCount = getPositiveSampleCount(lines);
+            int negativeCount = lines.length - positiveCount;
+
+            int positiveCountInResult = (int) (positiveCount * (sampleCount * 1.0 / lines.length));
+            int negativeCountInResult = sampleCount - positiveCountInResult;
+
+            int[] positives = sampleIndex(lines, positiveCount, positiveCountInResult, " 1");
+            int[] negatives = sampleIndex(lines, negativeCount, negativeCountInResult, " 0");
+
+            int i1 = 0;
+            int i2 = 0;
+            int i = 0;
+
+            while (i1 < positives.length && i2 < negatives.length) {
+                int p = positives[i1];
+                int n = negatives[i2];
+
+                if (p > n) {
+                    result[i] = lines[n];
+                    i2++;
+                } else {
+                    result[i] = lines[p];
+                    i1++;
+                }
+
+                i++;
+            }
+
+            for (int j = i1; j < positives.length; j++) {
+                result[i] = lines[positives[j]];
+                i++;
+            }
+
+            for (int j = i2; j < negatives.length; j++) {
+                result[i] = lines[negatives[j]];
+                i++;
+            }
+
+            return result;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        return null;
+    }
+
+    private int[] sampleIndex(String[] lines, int count, int required, String ending) {
+        ArrayList<Integer> indexes = new ArrayList<>(count);
+        for (int i = 0; i < lines.length; i++) {
+            if (lines[i].endsWith(ending)) {
+                indexes.add(i);
+            }
+        }
+
+        Random random = new Random();
+        int[] result = new int[required];
+
+        for (int i = 0; i < result.length; i++) {
+            int index = (random.nextInt() & 0x0fffffff) % indexes.size();
+            result[i] = indexes.get(index);
+            indexes.remove(index);
+        }
+
+        return result;
+    }
+
+    private int getPositiveSampleCount(String[] lines) {
+        int result = 0;
+
+        for (int i = 0; i < lines.length; i++) {
+            if (lines[i].endsWith(" 1"))
+                result++;
+
+        }
+        return result;
     }
 
     private void populateInputsAndOutputs(String[] lines, int inputCount, double[][] input, double[][] output) {

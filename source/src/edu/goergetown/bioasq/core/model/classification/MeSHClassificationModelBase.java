@@ -90,8 +90,8 @@ public abstract class MeSHClassificationModelBase {
             result.add(cCluster);
 
             Cluster cluster = clusters.get(i);
-            for (int j = 0; j < cluster.centroid.featureCount; j++) {
-                FeatureValuePair pair = cluster.centroid.features[j];
+            for (int j = 0; j < cluster.centroid.featureCount(); j++) {
+                FeatureValuePair pair = cluster.centroid.getFeature(j);
 
                 cCluster.meshes.add(new ClassificationClusterMeSH(pair.name, pair.value));
             }
@@ -102,8 +102,8 @@ public abstract class MeSHClassificationModelBase {
 
             for (Vector document : documents) {
                 Vector features = documentsFeatures.get(document.identifier);
-                for (int j = 0; j < features.featureCount; j++) {
-                    FeatureValuePair f = features.features[j];
+                for (int j = 0; j < features.featureCount(); j++) {
+                    FeatureValuePair f = features.getFeature(j);
                     centroid.addWeight(f.name, f.value);
                 }
             }
@@ -155,7 +155,7 @@ public abstract class MeSHClassificationModelBase {
     }
 
     public static ArrayList<Cluster> loadClusters(ITaskListener listener, ClassifierParameter parameter) {
-        String filePathTemplate = Constants.CLUSTERING_DOCUMENT_MESH_INFO_FOLDER + "adaptive" + Constants.BACK_SLASH + parameter.clusteringParameter + Constants.BACK_SLASH + "%d" + Constants.BACK_SLASH + "clusters.bin";
+        String filePathTemplate = Constants.CLUSTERING_DOCUMENT_MESH_INFO_FOLDER + parameter.clusteringMethod + Constants.BACK_SLASH + parameter.clusteringParameter + Constants.BACK_SLASH + "%d" + Constants.BACK_SLASH + "clusters.bin";
         int iteration = 1;
 
         while (FileUtils.exists(String.format(filePathTemplate, iteration))) {

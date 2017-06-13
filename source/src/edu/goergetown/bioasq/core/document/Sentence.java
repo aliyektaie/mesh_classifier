@@ -60,15 +60,34 @@ public class Sentence {
     }
 
     public String toString(boolean includePOS) {
+        return toString(includePOS, false);
+    }
+
+    public String toString(boolean includePOS, boolean removeNonASCII) {
         StringBuilder result = new StringBuilder();
 
         for (Term t:tokens) {
             if (includePOS) {
-                result.append(t.toString());
+                result.append(removeNonAscii(t.toString(), removeNonASCII));
             } else {
-                result.append(t.token);
+                result.append(removeNonAscii(t.token, removeNonASCII));
             }
             result.append(" ");
+        }
+
+        return result.toString();
+    }
+
+    private String removeNonAscii(String text, boolean removeNonASCII) {
+        if (!removeNonASCII)
+            return text;
+
+        StringBuilder result = new StringBuilder();
+
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+            if (c <= 127)
+                result.append(c);
         }
 
         return result.toString();

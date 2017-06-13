@@ -1,0 +1,24 @@
+<component name="libraryTable">
+  <library name="annotations-7.0.3">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/jlibsvm/annotations-7.0.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jlibsvm/collections-generic-4.01.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jlibsvm/commons-collections-20040616.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jlibsvm/commons-lang-2.6.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jlibsvm/commons-logging-1.1.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jlibsvm/conja-1.061.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jlibsvm/dsutils-1.051.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jlibsvm/google-collections-1.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jlibsvm/JSAP-2.0a-ds1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jlibsvm/log4j-1.2.16.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jlibsvm/ml-0.921.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jlibsvm/runutils-0.911.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jlibsvm/slf4j-api-1.6.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jlibsvm/slf4j-log4j12-1.6.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jlibsvm/stats-0.931.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jlibsvm/trees-1.031.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

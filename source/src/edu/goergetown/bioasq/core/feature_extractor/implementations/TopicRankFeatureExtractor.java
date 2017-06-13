@@ -275,4 +275,9 @@ public class TopicRankFeatureExtractor implements IDocumentFeatureExtractor {
 
         return result;
     }
+
+    @Override
+    public int getCoreCount() {
+        return Constants.CORE_COUNT;
+    }
 }

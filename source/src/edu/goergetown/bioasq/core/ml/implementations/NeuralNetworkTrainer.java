@@ -2,6 +2,7 @@ package edu.goergetown.bioasq.core.ml.implementations;
 
 import edu.goergetown.bioasq.core.ml.EvaluationOnTrainingDataResult;
 import edu.goergetown.bioasq.core.ml.IMachineLearningTrainer;
+import org.neuroph.core.NeuralNetwork;
 import org.neuroph.core.data.DataSet;
 import org.neuroph.core.data.DataSetRow;
 import org.neuroph.nnet.MultiLayerPerceptron;
@@ -54,6 +55,14 @@ public class NeuralNetworkTrainer implements IMachineLearningTrainer {
         result.wrong = wrong;
 
         return result;
+    }
+
+    @Override
+    public boolean evaluate(double[] features, String filePath) {
+        NeuralNetwork network = NeuralNetwork.createFromFile(filePath);
+        network.setInput(features);
+        double[] result = network.getOutput();
+        return result[0] > 0.5;
     }
 
     @Override

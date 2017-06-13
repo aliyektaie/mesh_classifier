@@ -13,10 +13,11 @@ import edu.goergetown.bioasq.core.task.ISubTaskThread;
 import edu.goergetown.bioasq.core.task.SubTaskInfo;
 import edu.goergetown.bioasq.ui.ITaskListener;
 import edu.goergetown.bioasq.utils.FileUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Hashtable;
-import java.util.Random;
 
 /**
  * Created by Yektaie on 5/30/2017.
@@ -40,7 +41,9 @@ public class EvaluationTask extends BaseTask {
             parameter = this.configurations.get(0);
         }
 
-        predictor = MeshPredictors.getPredictors().get(0).duplicate();
+        ArrayList<IMeshPredictor> list = MeshPredictors.getPredictors();
+        predictor = list.get(0).duplicate();
+//        predictor = list.get(list.size() - 1).duplicate();
     }
 
     @Override
@@ -58,18 +61,18 @@ public class EvaluationTask extends BaseTask {
         ArrayList<ISubTaskThread> threads = createWorkerThreads(model, modelHash, documents);
         executeWorkerThreads(listener, EVALUATE_TASK, threads);
 
-        saveReport(threads, parameter);
+        saveReport(threads, parameter, listener);
 
         if (!existsCacheFile(modelHash)) {
             listener.log("Saving cluster map cache file");
             listener.setCurrentState("Saving cluster map cache file");
-            Hashtable<String, String> cachedClusterMaps = getClusterMaps(threads);
+            Hashtable<String, ArrayList<String>> cachedClusterMaps = getClusterMaps(threads);
             saveCacheFile(listener, modelHash, cachedClusterMaps);
         }
 
     }
 
-    private void saveReport(ArrayList<ISubTaskThread> threads, ClassifierParameter parameter) {
+    private void saveReport(ArrayList<ISubTaskThread> threads, ClassifierParameter parameter, ITaskListener listener) {
         ArrayList<DocumentEvaluationResult> results = new ArrayList<>();
         for (int i = 0; i < threads.size(); i++) {
             EvaluationThread t = (EvaluationThread) threads.get(i);
@@ -81,21 +84,36 @@ public class EvaluationTask extends BaseTask {
             FileUtils.createDirectory(reportFolder);
         }
 
-        saveCSVReport(results, reportFolder);
+        saveCSVReport(results, reportFolder, listener);
     }
 
-    private void saveCSVReport(ArrayList<DocumentEvaluationResult> results, String folder) {
+    private void saveCSVReport(ArrayList<DocumentEvaluationResult> results, String folder, ITaskListener listener) {
         StringBuilder result = new StringBuilder();
         result.append("Document Identifier,Precision,Recall,F1 Score");
 
+        double avgPrecision = 0;
+        double avgRecall = 0;
+        double avgF1 = 0;
+
         for (DocumentEvaluationResult entry : results) {
             result.append(String.format("\r\n%s,%.5f,%.5f,%.5f", entry.documentIdentifier, entry.precision, entry.recall, entry.f1));
+
+            avgPrecision += entry.precision;
+            avgRecall += entry.recall;
+            avgF1 += entry.f1;
         }
+
+        listener.log("");
+        listener.log("Evaluation Report:");
+        listener.log(String.format("     Precision: %.3f", avgPrecision / results.size()));
+        listener.log(String.format("     Recall: %.3f", avgRecall / results.size()));
+        listener.log(String.format("     F1: %.3f", avgF1 / results.size()));
+        listener.log("");
 
         FileUtils.writeText(folder + "Predictions Metrics.csv", result.toString());
     }
 
-    private void saveCacheFile(ITaskListener listener, String modelHash, Hashtable<String, String> cachedClusterMaps) {
+    private void saveCacheFile(ITaskListener listener, String modelHash, Hashtable<String, ArrayList<String>> cachedClusterMaps) {
         StringBuilder result = new StringBuilder();
 
         String del = "";
@@ -107,8 +125,13 @@ public class EvaluationTask extends BaseTask {
 
             count++;
             result.append(del);
-            result.append(String.format("%s -> %s", key, cachedClusterMaps.get(key)));
+            result.append(key);
+            for (String id : cachedClusterMaps.get(key)) {
+                result.append("\r\n\t");
+                result.append(id);
+            }
 
+            result.append("\r\n");
             del = "\r\n";
         }
 
@@ -137,8 +160,8 @@ public class EvaluationTask extends BaseTask {
         return folder + fileName + ".txt";
     }
 
-    private Hashtable<String, String> getClusterMaps(ArrayList<ISubTaskThread> threads) {
-        Hashtable<String, String> result = new Hashtable<>();
+    private Hashtable<String, ArrayList<String>> getClusterMaps(ArrayList<ISubTaskThread> threads) {
+        Hashtable<String, ArrayList<String>> result = new Hashtable<>();
 
         for (int i = 0; i < threads.size(); i++) {
             EvaluationThread t = (EvaluationThread) threads.get(i);
@@ -175,15 +198,26 @@ public class EvaluationTask extends BaseTask {
         return result;
     }
 
-    private Hashtable<String, String> loadCache(String modelHash) {
-        Hashtable<String, String> result = new Hashtable<>();
+    private Hashtable<String, ArrayList<String>> loadCache(String modelHash) {
+        Hashtable<String, ArrayList<String>> result = new Hashtable<>();
 
         if (FileUtils.exists(getCacheFilePath(modelHash))) {
+            String id = null;
+            ArrayList<String> list = null;
+
             String[] lines = FileUtils.readAllLines(getCacheFilePath(modelHash));
 
             for (int i = 0; i < lines.length; i++) {
-                String[] parts = lines[i].split(" -> ");
-                result.put(parts[0], parts[1]);
+                String line = lines[i];
+
+                if (line.startsWith("\t")) {
+                    list.add(line.trim());
+                } else if (!line.trim().equals("")) {
+                    id = line.trim();
+                    list = new ArrayList<>();
+
+                    result.put(id, list);
+                }
             }
         }
 
@@ -248,43 +282,63 @@ class EvaluationThread extends Thread implements ISubTaskThread {
     private double progress = 0;
     public ArrayList<ClassificationCluster> modelClusters = null;
     public String modelHash = "";
-    public ArrayList<DocumentFeatureSet> documents= null;
-    public Hashtable<String, String> mappedDocument = new Hashtable<>();
+    public ArrayList<DocumentFeatureSet> documents = null;
+    public Hashtable<String, ArrayList<String>> mappedDocument = new Hashtable<>();
     public ArrayList<DocumentEvaluationResult> results = new ArrayList<>();
     public IMeshPredictor predictor = null;
+    public int neiborsToConsider = 5;
 
     @Override
     public void run() {
-        for (int i = 0; i < 200; i++) {
-//        for (int i = 0; i < documents.size(); i++) {
+//        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < documents.size(); i++) {
             updateProgress(i);
 
             DocumentFeatureSet document = documents.get(i);
             Vector vector = document.toVector();
 
-            ClassificationCluster cluster = getClassificationCluster(vector);
+            ArrayList<ClassificationCluster> clusters = getClassificationClusters(vector);
+            cacheClusterMap(vector, clusters);
 
-            if (cluster != null) {
-                cacheClusterMap(vector, cluster);
+            ArrayList<String> predictions = new ArrayList<>();
+            for (ClassificationCluster cluster : clusters) {
                 ArrayList<String> predictedMesh = predictor.predict(document, cluster);
-                ArrayList<String> correctMesh = document.meshList;
-                ArrayList<String> correctPredictions = getCorrectPredictions(predictedMesh, correctMesh);
+                predictions.addAll(predictedMesh);
+            }
 
-                DocumentEvaluationResult result = new DocumentEvaluationResult();
+            predictions = removeDuplicates(predictions);
 
-                result.precision = correctPredictions.size() * 1.0 / predictedMesh.size();
+            ArrayList<String> correctMesh = document.meshList;
+            ArrayList<String> correctPredictions = getCorrectPredictions(predictions, correctMesh);
+
+            DocumentEvaluationResult result = new DocumentEvaluationResult();
+
+            if (predictions.size() != 0) {
+                result.precision = correctPredictions.size() * 1.0 / predictions.size();
                 result.recall = correctPredictions.size() * 1.0 / correctMesh.size();
                 result.f1 = 2 * (result.precision * result.recall) / (result.precision + result.recall);
-
-                result.correctResults = correctMesh;
-                result.predictedResults = predictedMesh;
-                result.documentIdentifier = vector.identifier;
-
-                results.add(result);
             }
+
+            result.correctResults = correctMesh;
+            result.predictedResults = predictions;
+            result.documentIdentifier = vector.identifier;
+
+            results.add(result);
         }
 
         finished = true;
+    }
+
+    private ArrayList<String> removeDuplicates(ArrayList<String> predictions) {
+        ArrayList<String> result = new ArrayList<>();
+
+        for (String mesh : predictions) {
+            if (!result.contains(mesh)) {
+                result.add(mesh);
+            }
+        }
+
+        return result;
     }
 
     private ArrayList<String> getCorrectPredictions(ArrayList<String> predictedMesh, ArrayList<String> correctMesh) {
@@ -299,38 +353,51 @@ class EvaluationThread extends Thread implements ISubTaskThread {
         return result;
     }
 
-    private void cacheClusterMap(Vector vector, ClassificationCluster cluster) {
-        mappedDocument.put(vector.identifier, cluster.identifier.toString());
+    private void cacheClusterMap(Vector vector, ArrayList<ClassificationCluster> clusters) {
+        ArrayList<String> ids = new ArrayList<>();
+        for (ClassificationCluster cluster : clusters) {
+            ids.add(cluster.identifier.toString());
+        }
+        mappedDocument.put(vector.identifier, ids);
     }
 
-    private ClassificationCluster getClassificationCluster(Vector vector) {
+    private ArrayList<ClassificationCluster> getClassificationClusters(Vector vector) {
         if (mappedDocument.containsKey(vector.identifier)) {
-            return getClassificationCluster(mappedDocument.get(vector.identifier));
+            return getClassificationCluster(vector.identifier);
         }
-        ClassificationCluster cluster = null;
-        double similarity = -1;
 
-        for (ClassificationCluster c : modelClusters) {
+        ClusterSimilarityPair[] array = new ClusterSimilarityPair[modelClusters.size()];
+
+        for (int i = 0; i < array.length; i++) {
+            ClassificationCluster c = modelClusters.get(i);
             double sim = c.centroid.getSimilarity(vector, Vector.SIMILARITY_COSINE);
-            if (sim > similarity) {
-                similarity = sim;
-                cluster = c;
-            }
+
+            array[i] = new ClusterSimilarityPair();
+            array[i].cluster = c;
+            array[i].similarity = sim;
         }
-        return cluster;
+
+        Arrays.sort(array);
+
+        ArrayList<ClassificationCluster> result = new ArrayList<>();
+        for (int i = 0; i < neiborsToConsider; i++) {
+            result.add(array[array.length - 1 - i].cluster);
+        }
+
+        return result;
     }
 
-    private ClassificationCluster getClassificationCluster(String identifier) {
-        ClassificationCluster cluster = null;
+    private ArrayList<ClassificationCluster> getClassificationCluster(String identifier) {
+        ArrayList<ClassificationCluster> result = new ArrayList<>();
+        ArrayList<String> ids = mappedDocument.get(identifier);
 
         for (ClassificationCluster c : modelClusters) {
-            if (c.identifier.toString().equals(identifier)) {
-                cluster = c;
-                break;
+            if (ids.contains(c.identifier.toString())) {
+                result.add(c);
             }
         }
 
-        return cluster;
+        return result;
     }
 
     private void updateProgress(int i) {
@@ -356,4 +423,14 @@ class DocumentEvaluationResult {
     public String documentIdentifier = "";
     public ArrayList<String> correctResults = new ArrayList<>();
     public ArrayList<String> predictedResults = new ArrayList<>();
+}
+
+class ClusterSimilarityPair implements Comparable<ClusterSimilarityPair> {
+    public ClassificationCluster cluster = null;
+    public double similarity = 0;
+
+    @Override
+    public int compareTo(@NotNull ClusterSimilarityPair o) {
+        return new Double(o.similarity).compareTo(similarity);
+    }
 }

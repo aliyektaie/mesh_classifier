@@ -33,7 +33,7 @@ public class CreateMachineLearningTrainingFilesTask extends BaseTask {
     @Override
     public void process(ITaskListener listener) {
         ClassifierParameter parameter = new ClassifierParameter();
-        parameter.clusteringParameter = "0.28";
+        parameter.clusteringParameter = "0.13";
         parameter.clusteringMethod = "adaptive";
         parameter.termExtractionMethod = "bm25f";
 
@@ -50,6 +50,9 @@ public class CreateMachineLearningTrainingFilesTask extends BaseTask {
         ArrayList<String> list = null;
         String mesh = null;
         int count = 0;
+        int index = 0;
+        ArrayList<String> meshes = loadMeshList();
+
 
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(getSamplesIDFilePath())));
@@ -60,6 +63,8 @@ public class CreateMachineLearningTrainingFilesTask extends BaseTask {
                 if (line.equals("-----------------------------------------------------------------")) {
                     if (mesh != null) {
                         processMeshIDList(mesh, list, documentsFeatures);
+                        index++;
+                        listener.setProgress(index, meshes.size());
                     }
 
                     if (count % 5 == 0) {
@@ -118,32 +123,36 @@ public class CreateMachineLearningTrainingFilesTask extends BaseTask {
         ArrayList<DocumentFeatureSet> documents = getDocuments(list, documentsFeatures);
         String[] features = getFeaturesFromDocuments(documents, mesh);
 
+
         try {
             String path = Constants.TEXT_CLASSIFIER_FOLDER + "Features" + Constants.BACK_SLASH + mesh;
             FileOutputStream fs = new FileOutputStream(path + ".data");
             double[] weights = new double[features.length];
 
-            String nl = "";
+            StringBuilder content = new StringBuilder();
             for (DocumentFeatureSet document : documents) {
-                fs.write(nl.getBytes());
-                nl = "\r\n";
 
                 setWeights(weights, features, document);
 
-                StringBuilder line = new StringBuilder();
                 for (int i = 0; i < weights.length; i++) {
-                    if (weights[i] == 0) {
-                        line.append("0");
-                    } else {
-                        line.append(String.format("%.5f", weights[i]));
+//                    if (weights[i] == 0) {
+//                        content.append("0");
+//                    } else {
+//                        content.append(String.format("%.5f", weights[i]));
+//                    }
+//                    content.append(" ");
+
+
+                    if (weights[i] != 0) {
+                        content.append(String.format("(%d,%.5f) ", i, weights[i]));
                     }
-                    line.append(" ");
                 }
 
-                line.append(document.meshList.contains(mesh) ? "1" : "0");
-
-                fs.write(line.toString().getBytes());
+                content.append(document.meshList.contains(mesh) ? "1" : "0");
+                content.append("\r\n");
             }
+
+            fs.write(content.toString().getBytes());
 
             fs.flush();
             fs.close();
@@ -230,7 +239,7 @@ public class CreateMachineLearningTrainingFilesTask extends BaseTask {
         for (String feature : result.keySet()) {
             StringIntPair p = result.get(feature);
 
-            if ((p.number > (positiveCount * 0.5)) && (p.number < (positiveCount * 2))) {
+            if ((p.number > (positiveCount * 0.5)) && (p.number < (positiveCount * 1.5))) {
                 toBeConsidered.add(p);
             }
         }
@@ -262,22 +271,30 @@ public class CreateMachineLearningTrainingFilesTask extends BaseTask {
         listener.log("Loading set document features");
 
         ArrayList<Cluster> clusters = MeSHClassificationModelBase.loadClusters(listener, parameter);
+        listener.log("Clusters loaded");
         ArrayList<String> meshes = loadMeshList();
+        listener.log("MeSH list loaded");
 
         listener.setCurrentState("Sampling clusters");
         LOAD_VOCABULARY.estimation = 0;
         Hashtable<String, ArrayList<String>> samples = doSampling(clusters, meshes, listener);
+        listener.setCurrentState("Sampling done, saving file");
+
         saveSampleIDList(listener, samples);
     }
 
     private void saveSampleIDList(ITaskListener listener, Hashtable<String, ArrayList<String>> samples) {
         int count = 0;
+        int i = 0;
 
         try {
             FileOutputStream fs = new FileOutputStream(getSamplesIDFilePath());
 
             for (String mesh : samples.keySet()) {
                 ArrayList<String> ids = samples.get(mesh);
+                if (i%10 == 0) {
+                    listener.setProgress(i, samples.size());
+                }
                 count += ids.size();
 
                 fs.write("\r\n-----------------------------------------------------------------".getBytes());
@@ -285,6 +302,8 @@ public class CreateMachineLearningTrainingFilesTask extends BaseTask {
                 for (String id : ids) {
                     fs.write(("\r\n\t" + id).getBytes());
                 }
+
+                i++;
             }
 
             fs.flush();
@@ -356,8 +375,8 @@ public class CreateMachineLearningTrainingFilesTask extends BaseTask {
             if (ci % 100 == 0) {
                 listener.setProgress(ci, model.size());
             }
-            for (int i = 0; i < cluster.centroid.featureCount; i++) {
-                FeatureValuePair feature = cluster.centroid.features[i];
+            for (int i = 0; i < cluster.centroid.featureCount(); i++) {
+                FeatureValuePair feature = cluster.centroid.getFeature(i);
 
                 if (considerToken(feature.name)) {
                     if (!temp.containsKey(feature.name)) {

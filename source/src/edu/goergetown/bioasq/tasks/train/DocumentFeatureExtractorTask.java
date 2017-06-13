@@ -4,6 +4,7 @@ import edu.goergetown.bioasq.Constants;
 import edu.goergetown.bioasq.core.document.Document;
 import edu.goergetown.bioasq.core.document.DocumentFeatureSet;
 import edu.goergetown.bioasq.core.document.IDocumentLoaderCallback;
+import edu.goergetown.bioasq.core.document.Sentence;
 import edu.goergetown.bioasq.core.feature_extractor.DocumentFeatureExtractors;
 import edu.goergetown.bioasq.core.feature_extractor.IDocumentFeatureExtractor;
 import edu.goergetown.bioasq.core.task.BaseTask;
@@ -99,6 +100,7 @@ public class DocumentFeatureExtractorTask extends BaseTask {
     private ArrayList<ISubTaskThread> splitTaskToThreads(IDocumentFeatureExtractor featureExtractor, ArrayList<String> inputFiles) {
         ArrayList<ISubTaskThread> result = new ArrayList<>();
         int threadCount = inputSource.getThreadCount();
+        threadCount = Math.min(threadCount, featureExtractor.getCoreCount());
 
         for (int i = 0; i < threadCount; i++) {
             DocumentFeatureExtractorThread thread = new DocumentFeatureExtractorThread();
@@ -110,7 +112,9 @@ public class DocumentFeatureExtractorTask extends BaseTask {
 
             for (int j = 0; j < inputFiles.size(); j++) {
                 if (threadCount == 1 || j % threadCount == i) {
-                    thread.documentFiles.add(inputFiles.get(j));
+                    if (FileUtils.exists(inputFiles.get(j))) {
+                        thread.documentFiles.add(inputFiles.get(j));
+                    }
                 }
             }
 
@@ -199,6 +203,9 @@ class DocumentFeatureExtractorThread extends Thread implements ISubTaskThread {
     public DocumentFeatureExtractorInputType inputSource = null;
     public ArrayList<String> finalMergedFiles = new ArrayList<>();
     public boolean includeMeSHListInFeatures = false;
+    public StringBuilder contentAsText = new StringBuilder();
+
+    public static boolean saveAsTextFile = true;
 
     @Override
     public void run() {
@@ -211,8 +218,24 @@ class DocumentFeatureExtractorThread extends Thread implements ISubTaskThread {
                 public void processDocument(Document document, int i, int totalDocumentCount) {
                     updateProgress(processedDocumentCount, totalDocumentToProcess);
                     DocumentFeatureExtractorThread.this.processDocument(document);
+
+                    if (saveAsTextFile) {
+                        contentAsText.append("pmid: " + document.identifier + ", year: " + document.metadata.get("year"));
+                        contentAsText.append("\n");
+                        contentAsText.append(document.title.toString(false, true));
+                        contentAsText.append("\n");
+                        for (Sentence sentence : document.text) {
+                            contentAsText.append(sentence.toString(false, true));
+                            contentAsText.append("\n");
+                        }
+                        contentAsText.append("\n");
+                    }
                 }
             });
+        }
+
+        if (saveAsTextFile) {
+            FileUtils.writeText(Constants.TEMP_FOLDER + "Text Contents" + Constants.BACK_SLASH + "input-" + threadID + ".txt", contentAsText.toString());
         }
 
         if (processedCount > 0)

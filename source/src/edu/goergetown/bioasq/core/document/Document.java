@@ -22,7 +22,13 @@ public class Document {
     public Hashtable<String, String> metadata = new Hashtable<>();
     public ArrayList<String> categories = new ArrayList<>();
 
-    private static MaxentTagger tagger = new MaxentTagger(Constants.STANFORD_POS_MODEL_FILE_PATH);
+    private static MaxentTagger tagger = null;
+
+    static {
+        try {
+//            tagger = new MaxentTagger(Constants.STANFORD_POS_MODEL_FILE_PATH);
+        } catch (Exception ex) { }
+    }
 
     @Override
     public String toString() {

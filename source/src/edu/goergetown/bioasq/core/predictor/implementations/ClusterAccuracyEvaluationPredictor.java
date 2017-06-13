@@ -15,10 +15,7 @@ public class ClusterAccuracyEvaluationPredictor implements IMeshPredictor {
     private ArrayList<String> tags = new ArrayList<>();
 
     public ClusterAccuracyEvaluationPredictor() {
-        ArrayList<String> temp = MeSHUtils.getCheckTagsMeSH();
-        synchronized (temp) {
-            tags.addAll(temp);
-        }
+        tags = MeSHUtils.getCheckTagsMeSH(true);
     }
 
     @Override

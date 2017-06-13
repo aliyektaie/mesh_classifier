@@ -24,19 +24,19 @@ public class MainWindow implements ITaskListener {
         tasks.add(new ExtractDatasetOnPaperYearTask());
         tasks.add(new CreateDatasetMergeTask());
         tasks.add(new PartOfSpeechTaggerTask());
-        tasks.add(new DocumentFeatureExtractorTask());
         tasks.add(new CreateMeSHProbabilityDistributionTask());
         tasks.add(new ClusterMeSHesTask());
         tasks.add(new HierarchicalAgglomerativeClusteringTask());
-        tasks.add(new AdaptiveMeSHListClustererTask());
         tasks.add(new CreateClassifierModelFileTask());
-        tasks.add(new EvaluationTask());
 //        tasks.add(new MeSHLabelTermOccurrenceInDocumentTask());
 //        tasks.add(new CalculateOveralScoreTask());
 //        tasks.add(new CalculateMeSHPresenceInClusterDistributionTask());
 //        tasks.add(new MeSHTermInDocumentTextClassifierTrainerTask());
         tasks.add(new CreateMachineLearningTrainingFilesTask());
+        tasks.add(new EvaluationTask());
         tasks.add(new MachineLearningClassifierTrainerTask());
+        tasks.add(new AdaptiveMeSHListClustererTask());
+        tasks.add(new DocumentFeatureExtractorTask());
     }
 
     private static final Font FONT = new Font("Noto Sans", Font.PLAIN, c(12));

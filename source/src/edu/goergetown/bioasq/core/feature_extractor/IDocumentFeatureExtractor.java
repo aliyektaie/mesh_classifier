@@ -23,4 +23,6 @@ public interface IDocumentFeatureExtractor {
     DocumentFeatureSet extractFeatures(Document document);
 
     void setInputFiles(ArrayList<String> inputFiles);
+
+    int getCoreCount();
 }

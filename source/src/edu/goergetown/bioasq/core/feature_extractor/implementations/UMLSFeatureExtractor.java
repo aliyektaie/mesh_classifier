@@ -81,6 +81,11 @@ public class UMLSFeatureExtractor implements IDocumentFeatureExtractor {
         this.inputFiles = inputFiles;
     }
 
+    @Override
+    public int getCoreCount() {
+        return Constants.CORE_COUNT;
+    }
+
     private ArrayList<NounPhrase> getBagOfWords(Document document) {
         ArrayList<NounPhrase> result = new ArrayList<>();
 

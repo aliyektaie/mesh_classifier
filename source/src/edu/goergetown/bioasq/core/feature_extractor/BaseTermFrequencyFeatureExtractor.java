@@ -12,10 +12,15 @@ import java.util.Hashtable;
  */
 public abstract class BaseTermFrequencyFeatureExtractor implements IDocumentFeatureExtractor {
     private boolean preprocessDone = false;
-    private static int documentCount = 0;
-    private static int documentAverageLength;
-    private static Hashtable<String, Integer> numberOfDocumentForEachTerm = null;
+    private int documentCount = 0;
+    private int documentAverageLength;
+    private Hashtable<String, Integer> numberOfDocumentForEachTerm = null;
     private ArrayList<String> inputFiles = null;
+
+    @Override
+    public int getCoreCount() {
+        return Constants.CORE_COUNT;
+    }
 
     @Override
     public void setInputFiles(ArrayList<String> inputFiles) {
@@ -79,9 +84,9 @@ public abstract class BaseTermFrequencyFeatureExtractor implements IDocumentFeat
             });
         }
 
-        BaseTermFrequencyFeatureExtractor.documentCount = documentCount[0];
-        BaseTermFrequencyFeatureExtractor.documentAverageLength = documentAverageLength[0] / BaseTermFrequencyFeatureExtractor.documentCount;
-        BaseTermFrequencyFeatureExtractor.numberOfDocumentForEachTerm = numberOfDocumentForEachTerm;
+        this.documentCount = documentCount[0];
+        this.documentAverageLength = documentAverageLength[0] / this.documentCount;
+        this.numberOfDocumentForEachTerm = numberOfDocumentForEachTerm;
 
         preprocessDone = true;
     }
