@@ -5,7 +5,7 @@ public interface IMachineLearningTrainer {
 
     String getFileExtension();
 
-    EvaluationOnTrainingDataResult train(double[][] input, double[][] output, int featureCount, String savePath);
+    EvaluationOnTrainingDataResult train(double[][] input, String[] vocabulary, double[][] output, int featureCount, String savePath);
 
     boolean evaluate(double[] features, String modelPath);
 }

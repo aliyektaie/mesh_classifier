@@ -14,14 +14,14 @@ public class Constants {
         } else {
             BACK_SLASH = "\\";
             if (isLaptop()) {
-                ROOT_FOLDER = "j:\\";
+                ROOT_FOLDER = "e:\\";
                 STANFORD_POS_MODEL_FILE_PATH = "D:\\Projects\\MeSH\\mesh_classifier\\source\\lib\\stanford-postagger\\models\\english-bidirectional-distsim.tagger";
                 CORE_COUNT = 4;
             } else {
 //                ROOT_FOLDER = "d:\\";
                 ROOT_FOLDER = "C:\\Users\\zghasemi\\Desktop\\Ali\\";
                 STANFORD_POS_MODEL_FILE_PATH = "c:\\Users\\zghasemi\\Desktop\\Ali\\mesh_classifier\\source\\lib\\stanford-postagger\\models\\english-bidirectional-distsim.tagger";
-                CORE_COUNT = 7;
+                CORE_COUNT = 8;
                 UI_COEF = 1;
             }
         }

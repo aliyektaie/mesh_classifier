@@ -15,44 +15,63 @@ import edu.goergetown.bioasq.core.task.ISubTaskThread;
 import edu.goergetown.bioasq.core.task.SubTaskInfo;
 import edu.goergetown.bioasq.ui.ITaskListener;
 import edu.goergetown.bioasq.utils.FileUtils;
+import org.jetbrains.annotations.NotNull;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.*;
 
 /**
  * Created by Yektaie on 6/2/2017.
  */
 public class CreateMachineLearningTrainingFilesTask extends BaseTask {
-    private SubTaskInfo LOAD_VOCABULARY = new SubTaskInfo("Loading vocabulary", 10);
+    private SubTaskInfo LOAD_VOCABULARY = new SubTaskInfo("Loading vocabulary", 0);
     private SubTaskInfo CREATE_TRAINING_FILES = new SubTaskInfo("Creating training files", 200);
 
 
     @Override
     public void process(ITaskListener listener) {
         ClassifierParameter parameter = new ClassifierParameter();
-        parameter.clusteringParameter = "0.13";
+        parameter.clusteringParameter = "0.21";
         parameter.clusteringMethod = "adaptive";
-        parameter.termExtractionMethod = "bm25f";
+        parameter.termExtractionMethod = "quick-umls";
+
+        createFeatureFolder();
+
+        listener.log("The sampling list file ('" + getSamplesIDFilePath() + "')");
+        listener.log("This task is done in 2 steps:");
+        listener.log("   1- Creating the sampling list file");
+        listener.log("   2- Spliting sampling list file.");
+        listener.log("   3- Creating training files based on sampling list file.");
+
 
         if (FileUtils.exists(getSamplesIDFilePath())) {
-            createTrainingFiles(listener, parameter);
+            String splited = getSplitedFolder();
+
+            if (FileUtils.getFiles(splited).size() > 0) {
+                createTrainingFiles(listener, parameter);
+            } else {
+                splitSamplingListFile(listener);
+            }
         } else {
             createSampleISListFile(listener, parameter);
         }
     }
 
-    private void createTrainingFiles(ITaskListener listener, ClassifierParameter parameter) {
-        Hashtable<String, DocumentFeatureSet> documentsFeatures = loadDocuments(listener, parameter);
-
+    private void splitSamplingListFile(ITaskListener listener) {
         ArrayList<String> list = null;
         String mesh = null;
         int count = 0;
         int index = 0;
         ArrayList<String> meshes = loadMeshList();
+        ArrayList<FileOutputStream> files = new ArrayList<>();
+        for (int i = 0; i < Constants.CORE_COUNT; i++) {
+            try {
+                FileOutputStream fs = new FileOutputStream(getSplitedFolder() + "file-" + i + ".txt");
+                files.add(fs);
+            } catch (FileNotFoundException e) {
 
+            }
+        }
 
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(getSamplesIDFilePath())));
@@ -62,7 +81,7 @@ public class CreateMachineLearningTrainingFilesTask extends BaseTask {
             while ((line = br.readLine()) != null) {
                 if (line.equals("-----------------------------------------------------------------")) {
                     if (mesh != null) {
-                        processMeshIDList(mesh, list, documentsFeatures);
+                        saveSampleIDListForMesh(mesh, list, files.get(index % Constants.CORE_COUNT));
                         index++;
                         listener.setProgress(index, meshes.size());
                     }
@@ -82,11 +101,67 @@ public class CreateMachineLearningTrainingFilesTask extends BaseTask {
                 } else if (line.trim().equals("")) {
                 }
             }
-        } catch (Exception ex) {}
+        } catch (Exception ex) {
+        }
 
         if (mesh != null) {
-            processMeshIDList(mesh, list, documentsFeatures);
+            saveSampleIDListForMesh(mesh, list, files.get(index % Constants.CORE_COUNT));
         }
+
+        for (FileOutputStream fs : files) {
+            try {
+                fs.flush();
+                fs.close();
+            } catch (IOException e) {
+            }
+        }
+    }
+
+    private void saveSampleIDListForMesh(String mesh, ArrayList<String> ids, FileOutputStream fs) {
+        try {
+            fs.write("\r\n-----------------------------------------------------------------".getBytes());
+            fs.write(("\r\nMeSH: " + mesh).getBytes());
+            for (String id : ids) {
+                fs.write(("\r\n\t" + id).getBytes());
+            }
+
+            fs.flush();
+        } catch (Exception e) {
+
+        }
+    }
+
+    @NotNull
+    private String getSplitedFolder() {
+        String splited = Constants.TEMP_FOLDER + "ml-train-set-ids-splited" + Constants.BACK_SLASH;
+        if (!FileUtils.exists(splited)) {
+            FileUtils.createDirectory(splited);
+        }
+        return splited;
+    }
+
+    private void createFeatureFolder() {
+        String path = Constants.TEXT_CLASSIFIER_FOLDER + "Features" + Constants.BACK_SLASH;
+        if (!FileUtils.exists(path)) {
+            FileUtils.createDirectory(path);
+        }
+    }
+
+    private void createTrainingFiles(ITaskListener listener, ClassifierParameter parameter) {
+        Hashtable<String, DocumentFeatureSet> documentsFeatures = loadDocuments(listener, parameter);
+        ArrayList<String> meshes = loadMeshList();
+
+        ArrayList<ISubTaskThread> threads = new ArrayList<>();
+        for (int i = 0; i < Constants.CORE_COUNT; i++) {
+            CreateTrainingFileThread t = new CreateTrainingFileThread();
+            threads.add(t);
+
+            t.meshes.addAll(meshes);
+            t.documentsFeatures.putAll(documentsFeatures);
+            t.filePath = getSplitedFolder() + "file-" + i + ".txt";
+        }
+
+        executeWorkerThreads(listener, CREATE_TRAINING_FILES, threads);
     }
 
     public static Hashtable<String, DocumentFeatureSet> loadDocuments(ITaskListener listener, ClassifierParameter parameter) {
@@ -119,165 +194,20 @@ public class CreateMachineLearningTrainingFilesTask extends BaseTask {
         return result;
     }
 
-    private void processMeshIDList(String mesh, ArrayList<String> list, Hashtable<String, DocumentFeatureSet> documentsFeatures) {
-        ArrayList<DocumentFeatureSet> documents = getDocuments(list, documentsFeatures);
-        String[] features = getFeaturesFromDocuments(documents, mesh);
-
-
-        try {
-            String path = Constants.TEXT_CLASSIFIER_FOLDER + "Features" + Constants.BACK_SLASH + mesh;
-            FileOutputStream fs = new FileOutputStream(path + ".data");
-            double[] weights = new double[features.length];
-
-            StringBuilder content = new StringBuilder();
-            for (DocumentFeatureSet document : documents) {
-
-                setWeights(weights, features, document);
-
-                for (int i = 0; i < weights.length; i++) {
-//                    if (weights[i] == 0) {
-//                        content.append("0");
-//                    } else {
-//                        content.append(String.format("%.5f", weights[i]));
-//                    }
-//                    content.append(" ");
-
-
-                    if (weights[i] != 0) {
-                        content.append(String.format("(%d,%.5f) ", i, weights[i]));
-                    }
-                }
-
-                content.append(document.meshList.contains(mesh) ? "1" : "0");
-                content.append("\r\n");
-            }
-
-            fs.write(content.toString().getBytes());
-
-            fs.flush();
-            fs.close();
-
-            StringBuilder featuresFile = new StringBuilder();
-            for (String feature : features) {
-                featuresFile.append(feature);
-                featuresFile.append("\r\n");
-            }
-
-            FileUtils.writeText(path + ".txt", featuresFile.toString());
-        } catch (Exception ex) {}
-    }
-
-    private void setWeights(double[] weights, String[] features, DocumentFeatureSet document) {
-        for (int i = 0; i < weights.length; i++) {
-            weights[i] = 0;
-        }
-
-        for (String feature : document.features.keySet()) {
-            int index = getIndex(features, feature);
-            if (index != -1) {
-                weights[index] = document.features.get(feature);
-            }
-        }
-    }
-
-    private int getIndex(String[] features, String feature) {
-
-        int begin = 0;
-        int end = features.length - 1;
-        int middle = 0;
-
-        feature = feature.toLowerCase();
-
-        int c = 0;
-        while (end - begin < 4 && c < 15) {
-            middle = (end + begin) / 2;
-            String m = features[middle];
-            int cmp = m.compareTo(feature);
-            if (cmp == 0) {
-                return middle;
-            } else if (cmp > 0) {
-                end = middle;
-            } else {
-                begin = middle;
-            }
-            c++;
-        }
-
-        for (int i = begin; i <= end; i++) {
-            if (features[i].equals(feature)) {
-                return i;
-            }
-        }
-
-        return -1;
-    }
-
-    private String[] getFeaturesFromDocuments(ArrayList<DocumentFeatureSet> documents, String mesh) {
-        Hashtable<String, StringIntPair> result = new Hashtable<>();
-        int positiveCount = 0;
-
-        for (DocumentFeatureSet document : documents) {
-            if (document.meshList.contains(mesh)) {
-                positiveCount++;
-            }
-
-            for (String f : document.features.keySet()) {
-                String feature = f.toLowerCase();
-                if (!result.containsKey(feature)) {
-                    StringIntPair pair = new StringIntPair();
-                    pair.number = 1;
-                    pair.str = feature;
-
-                    result.put(feature, pair);
-                } else {
-                    result.get(feature).number++;
-                }
-            }
-        }
-
-        ArrayList<StringIntPair> toBeConsidered = new ArrayList<>();
-        for (String feature : result.keySet()) {
-            StringIntPair p = result.get(feature);
-
-            if ((p.number > (positiveCount * 0.5)) && (p.number < (positiveCount * 1.5))) {
-                toBeConsidered.add(p);
-            }
-        }
-
-        String[] s = new String[toBeConsidered.size()];
-        for (int i = 0; i < s.length; i++) {
-            s[i] = toBeConsidered.get(i).str;
-        }
-
-        Arrays.sort(s);
-
-        return s;
-    }
-
-    private ArrayList<DocumentFeatureSet> getDocuments(ArrayList<String> list, Hashtable<String, DocumentFeatureSet> documentsFeatures) {
-        ArrayList<DocumentFeatureSet> result = new ArrayList<>();
-
-        for (String id : list) {
-            DocumentFeatureSet document = documentsFeatures.get(id);
-            if (document != null) {
-                result.add(document);
-            }
-        }
-
-        return result;
-    }
 
     private void createSampleISListFile(ITaskListener listener, ClassifierParameter parameter) {
-        listener.log("Loading set document features");
+        listener.log("Performing Step 1:");
+        listener.log("   -> Loading set document features");
 
         ArrayList<Cluster> clusters = MeSHClassificationModelBase.loadClusters(listener, parameter);
-        listener.log("Clusters loaded");
+        listener.log("   -> Clusters loaded");
         ArrayList<String> meshes = loadMeshList();
-        listener.log("MeSH list loaded");
+        listener.log("   -> MeSH list loaded");
 
-        listener.setCurrentState("Sampling clusters");
+        listener.log("   -> Sampling clusters");
         LOAD_VOCABULARY.estimation = 0;
         Hashtable<String, ArrayList<String>> samples = doSampling(clusters, meshes, listener);
+        listener.log("   -> Sampling done, saving file");
         listener.setCurrentState("Sampling done, saving file");
 
         saveSampleIDList(listener, samples);
@@ -292,7 +222,7 @@ public class CreateMachineLearningTrainingFilesTask extends BaseTask {
 
             for (String mesh : samples.keySet()) {
                 ArrayList<String> ids = samples.get(mesh);
-                if (i%10 == 0) {
+                if (i % 10 == 0) {
                     listener.setProgress(i, samples.size());
                 }
                 count += ids.size();
@@ -316,7 +246,7 @@ public class CreateMachineLearningTrainingFilesTask extends BaseTask {
     }
 
     private String getSamplesIDFilePath() {
-        return Constants.TEMP_FOLDER + "nn-train-set-ids.txt";
+        return Constants.TEMP_FOLDER + "ml-train-set-ids.txt";
     }
 
     private Hashtable<String, ArrayList<String>> doSampling(ArrayList<Cluster> model, ArrayList<String> meshes, ITaskListener listener) {
@@ -484,4 +414,219 @@ class SamplerThread extends Thread implements ISubTaskThread {
 class StringIntPair {
     public String str = "";
     public int number = 0;
+}
+
+class CreateTrainingFileThread extends Thread implements ISubTaskThread {
+    private boolean isFinished = false;
+    private double progress = 0;
+
+    public ArrayList<String> meshes = new ArrayList<>();
+    public String filePath = "";
+    public Hashtable<String, DocumentFeatureSet> documentsFeatures = new Hashtable<>();
+
+    @Override
+    public void run() {
+        ArrayList<String> list = null;
+        String mesh = null;
+        int count = 0;
+        int index = 0;
+
+
+        try {
+            BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(filePath)));
+
+            String line = null;
+
+            while ((line = br.readLine()) != null) {
+                if (line.equals("-----------------------------------------------------------------")) {
+                    if (mesh != null) {
+                        processMeshIDList(mesh, list, documentsFeatures);
+                        index++;
+                        progress = index*100.0 / (meshes.size() / Constants.CORE_COUNT);
+                    }
+
+                    count++;
+                    list = new ArrayList<>();
+                    mesh = null;
+                } else if (line.startsWith("MeSH: ")) {
+                    mesh = line.substring(line.indexOf(":") + 1).trim();
+                } else if (line.startsWith("\t")) {
+                    String id = line.trim();
+                    list.add(id);
+                } else if (line.trim().equals("")) {
+                }
+            }
+        } catch (Exception ex) {
+        }
+
+        if (mesh != null) {
+            processMeshIDList(mesh, list, documentsFeatures);
+        }
+        isFinished = true;
+    }
+
+    @Override
+    public boolean isFinished() {
+        return isFinished;
+    }
+
+    @Override
+    public double getProgress() {
+        return progress;
+    }
+
+    private void processMeshIDList(String mesh, ArrayList<String> list, Hashtable<String, DocumentFeatureSet> documentsFeatures) {
+        String path = Constants.TEXT_CLASSIFIER_FOLDER + "Features" + Constants.BACK_SLASH + mesh;
+
+        if (FileUtils.exists(path + ".txt"))
+            return;
+
+        ArrayList<DocumentFeatureSet> documents = getDocuments(list, documentsFeatures);
+        String[] features = getFeaturesFromDocuments(documents, mesh);
+
+
+        try {
+            FileOutputStream fs = new FileOutputStream(path + ".data");
+            double[] weights = new double[features.length];
+
+            StringBuilder content = new StringBuilder();
+
+            for (DocumentFeatureSet document : documents) {
+                setWeights(weights, features, document);
+
+                for (int i = 0; i < weights.length; i++) {
+
+//                    if (weights[i] == 0) {
+//                        content.append("0");
+//                    } else {
+//                        content.append(String.format("%.5f", weights[i]));
+//                    }
+//                    content.append(" ");
+
+
+                    if (weights[i] != 0) {
+                        content.append(String.format("(%d,%.5f) ", i, weights[i]));
+                    }
+                }
+
+                content.append(document.meshList.contains(mesh) ? "1" : "0");
+                content.append("\r\n");
+            }
+
+            fs.write(content.toString().getBytes());
+
+            fs.flush();
+            fs.close();
+
+            StringBuilder featuresFile = new StringBuilder();
+            for (String feature : features) {
+                featuresFile.append(feature);
+                featuresFile.append("\r\n");
+            }
+
+            FileUtils.writeText(path + ".txt", featuresFile.toString());
+        } catch (Exception ex) {
+        }
+    }
+
+    private void setWeights(double[] weights, String[] features, DocumentFeatureSet document) {
+        for (int i = 0; i < weights.length; i++) {
+            weights[i] = 0;
+        }
+
+        for (String feature : document.features.keySet()) {
+            int index = getIndex(features, feature);
+            if (index != -1) {
+                weights[index] = document.features.get(feature);
+            }
+        }
+    }
+
+    private int getIndex(String[] features, String feature) {
+
+        int begin = 0;
+        int end = features.length - 1;
+        int middle = 0;
+
+        feature = feature.toLowerCase();
+
+        int c = 0;
+        while (end - begin < 4 && c < 15) {
+            middle = (end + begin) / 2;
+            String m = features[middle];
+            int cmp = m.compareTo(feature);
+            if (cmp == 0) {
+                return middle;
+            } else if (cmp > 0) {
+                end = middle;
+            } else {
+                begin = middle;
+            }
+            c++;
+        }
+
+        for (int i = begin; i <= end; i++) {
+            if (features[i].equals(feature)) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    private String[] getFeaturesFromDocuments(ArrayList<DocumentFeatureSet> documents, String mesh) {
+        Hashtable<String, StringIntPair> result = new Hashtable<>();
+        int positiveCount = 0;
+
+        for (DocumentFeatureSet document : documents) {
+            if (document.meshList.contains(mesh)) {
+                positiveCount++;
+            }
+
+            for (String f : document.features.keySet()) {
+                String feature = f.toLowerCase();
+                if (!result.containsKey(feature)) {
+                    StringIntPair pair = new StringIntPair();
+                    pair.number = 1;
+                    pair.str = feature;
+
+                    result.put(feature, pair);
+                } else {
+                    result.get(feature).number++;
+                }
+            }
+        }
+
+        ArrayList<StringIntPair> toBeConsidered = new ArrayList<>();
+        for (String feature : result.keySet()) {
+            StringIntPair p = result.get(feature);
+
+            if ((p.number > (positiveCount * 0.3)) && (p.number < (positiveCount * 1.5))) {
+                toBeConsidered.add(p);
+            }
+        }
+
+        String[] s = new String[toBeConsidered.size()];
+        for (int i = 0; i < s.length; i++) {
+            s[i] = toBeConsidered.get(i).str;
+        }
+
+        Arrays.sort(s);
+
+        return s;
+    }
+
+    private ArrayList<DocumentFeatureSet> getDocuments(ArrayList<String> list, Hashtable<String, DocumentFeatureSet> documentsFeatures) {
+        ArrayList<DocumentFeatureSet> result = new ArrayList<>();
+
+        for (String id : list) {
+            DocumentFeatureSet document = documentsFeatures.get(id);
+            if (document != null) {
+                result.add(document);
+            }
+        }
+
+        return result;
+    }
+
 }

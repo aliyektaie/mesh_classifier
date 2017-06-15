@@ -4,6 +4,7 @@ import edu.goergetown.bioasq.Constants;
 import edu.goergetown.bioasq.core.document.DocumentFeatureSet;
 import edu.goergetown.bioasq.core.model.Vector;
 import edu.goergetown.bioasq.core.model.classification.ClassificationCluster;
+import edu.goergetown.bioasq.core.model.classification.ClassificationClusterMeSH;
 import edu.goergetown.bioasq.core.model.classification.ClassifierParameter;
 import edu.goergetown.bioasq.core.model.classification.MeSHClassificationModelBase;
 import edu.goergetown.bioasq.core.predictor.IMeshPredictor;
@@ -11,12 +12,14 @@ import edu.goergetown.bioasq.core.predictor.MeshPredictors;
 import edu.goergetown.bioasq.core.task.BaseTask;
 import edu.goergetown.bioasq.core.task.ISubTaskThread;
 import edu.goergetown.bioasq.core.task.SubTaskInfo;
+import edu.goergetown.bioasq.tasks.train.MeSHTermInDocumentTextClassifierTrainerTask;
 import edu.goergetown.bioasq.ui.ITaskListener;
 import edu.goergetown.bioasq.utils.FileUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Hashtable;
 
 /**
@@ -42,8 +45,8 @@ public class EvaluationTask extends BaseTask {
         }
 
         ArrayList<IMeshPredictor> list = MeshPredictors.getPredictors();
-        predictor = list.get(0).duplicate();
-//        predictor = list.get(list.size() - 1).duplicate();
+//        predictor = list.get(0).duplicate();
+        predictor = list.get(list.size() - 1).duplicate();
     }
 
     @Override
@@ -51,17 +54,21 @@ public class EvaluationTask extends BaseTask {
         listener.log("Load model MD5 hash");
         String modelHash = MeSHClassificationModelBase.getModelHash(listener, parameter);
         listener.log(getCacheFilePath(modelHash));
+
+        listener.log("Initializing predictor");
+        listener.setCurrentState("Initializing predictor");
+        predictor.initialize(listener);
+
         listener.log("Load model clusters");
         ArrayList<ClassificationCluster> model = MeSHClassificationModelBase.load(listener, parameter);
 
         listener.log("Loading set document features");
         ArrayList<DocumentFeatureSet> documents = DocumentFeatureSet.loadListFromFile(inputSource.getFeatureSetFolder() + parameter.termExtractionMethod + Constants.BACK_SLASH + inputSource.getFeatureSetFileName());
 
+
         listener.log("Classifying documents into clusters");
         ArrayList<ISubTaskThread> threads = createWorkerThreads(model, modelHash, documents);
         executeWorkerThreads(listener, EVALUATE_TASK, threads);
-
-        saveReport(threads, parameter, listener);
 
         if (!existsCacheFile(modelHash)) {
             listener.log("Saving cluster map cache file");
@@ -70,24 +77,221 @@ public class EvaluationTask extends BaseTask {
             saveCacheFile(listener, modelHash, cachedClusterMaps);
         }
 
+        saveReport(threads, parameter, listener);
     }
 
     private void saveReport(ArrayList<ISubTaskThread> threads, ClassifierParameter parameter, ITaskListener listener) {
+        ArrayList<DocumentEvaluationResult> results = mergeEvaluationResults(threads);
+        String reportFolder = createReportFolder(parameter);
+
+        saveClassificationReport(results, reportFolder, listener);
+        saveMeshAccuracyReport(results, reportFolder, listener);
+        saveByDocumentReport(results, reportFolder, listener);
+        saveMeSHCandidates(threads, reportFolder);
+
+        listener.saveLogs(reportFolder + "log.txt");
+    }
+
+    private void saveMeSHCandidates(ArrayList<ISubTaskThread> threads, String reportFolder) {
+        ArrayList<String> seenCandidates = new ArrayList<>();
+        for (ISubTaskThread t : threads)
+            seenCandidates.addAll(((EvaluationThread)t).seenCandidates);
+
+        seenCandidates = EvaluationThread.removeDuplicates(seenCandidates);
+        StringBuilder content = new StringBuilder();
+        for (String candidate : seenCandidates)
+            content.append(candidate + "\r\n");
+
+        FileUtils.writeText(reportFolder + "MeSH Candidates.txt", content.toString());
+    }
+
+    private void saveByDocumentReport(ArrayList<DocumentEvaluationResult> evaluationResults, String reportFolder, ITaskListener listener) {
+        listener.log("Creating per document report");
+        listener.setCurrentState("Creating per document report");
+
+        StringBuilder content = new StringBuilder();
+        DocumentEvaluationResult[] results = new DocumentEvaluationResult[evaluationResults.size()];
+        for (int i = 0; i < results.length; i++) {
+            results[i] = evaluationResults.get(i);
+        }
+
+        Arrays.sort(results, new Comparator<DocumentEvaluationResult>() {
+            @Override
+            public int compare(DocumentEvaluationResult o1, DocumentEvaluationResult o2) {
+                return new Double(o2.f1).compareTo(o1.f1);
+            }
+        });
+
+        for (int i = 0; i < results.length; i++) {
+            if (i % 10 == 0)
+                listener.setProgress(i, results.length);
+
+            DocumentEvaluationResult result = results[i];
+            ArrayList<String> intersection = getIntersection(result.correctResults, result.predictedResults);
+
+            if (i>0) {
+                content.append("\r\n--------------------------------------------------------------------\r\n");
+            }
+
+            content.append("Document Identifier: " + result.documentIdentifier);
+            content.append("\r\n\tSimple Metrics:");
+            content.append(String.format("\r\n\t\tP: %.3f", result.precision));
+            content.append(String.format("\r\n\t\tR: %.3f", result.recall));
+            content.append(String.format("\r\n\t\tF1: %.3f", result.f1));
+            content.append("\r\n\tCorrect Predictions [" + intersection.size() + "]:");
+            for (String mesh : intersection) {
+                content.append(String.format("\r\n\t\t%s", mesh));
+            }
+
+            ArrayList<String> missing = new ArrayList<>();
+            for (String mesh : result.correctResults) {
+                if (!intersection.contains(mesh)) {
+                    missing.add(mesh);
+                }
+            }
+            content.append("\r\n\tMissing Predictions [" + missing.size() + "]:");
+            for (String mesh : missing) {
+                content.append(String.format("\r\n\t\t%s", mesh));
+            }
+
+            ArrayList<String> wrong = new ArrayList<>();
+            for (String mesh : result.predictedResults) {
+                if (!result.correctResults.contains(mesh)) {
+                    wrong.add(mesh);
+                }
+            }
+            content.append("\r\n\tWrong Predictions [" + wrong.size() + "]:");
+            for (String mesh : wrong) {
+                content.append(String.format("\r\n\t\t%s", mesh));
+            }
+
+        }
+
+        FileUtils.writeText(reportFolder + "Detailed Report.txt", content.toString());
+    }
+
+    private void saveMeshAccuracyReport(ArrayList<DocumentEvaluationResult> results, String reportFolder, ITaskListener listener) {
+        listener.log("Creating MeSH accuracy report");
+        listener.setCurrentState("Creating MeSH accuracy report");
+        ArrayList<String> unseenMeshes = new ArrayList<>();
+
+        ArrayList<String> meshes = loadMeshList();
+        Hashtable<String, MeSHEvaluationResult> evaluationResult = new Hashtable<>();
+        for (String mesh : meshes) {
+            MeSHEvaluationResult o = new MeSHEvaluationResult();
+            o.mesh = mesh;
+            evaluationResult.put(mesh, o);
+        }
+
+        for (int i = 0; i < results.size(); i++) {
+            if (i % 10 == 0)
+                listener.setProgress(i, results.size());
+
+            DocumentEvaluationResult result = results.get(i);
+            ArrayList<String> intersection = getIntersection(result.correctResults, result.predictedResults);
+            for (String mesh : intersection) {
+                evaluationResult.get(mesh).correctPrediction++;
+            }
+
+            for (String mesh : result.correctResults) {
+                MeSHEvaluationResult o = evaluationResult.get(mesh);
+                if (o ==  null) {
+                    if (!unseenMeshes.contains(mesh)) {
+                        unseenMeshes.add(mesh);
+                    }
+                } else {
+                    o.documentCount++;
+                }
+            }
+
+            for (String mesh : result.predictedResults) {
+                if (!intersection.contains(mesh)) {
+                    MeSHEvaluationResult o = evaluationResult.get(mesh);
+                    if (o == null) {
+                        if (!unseenMeshes.contains(mesh)) {
+                            unseenMeshes.add(mesh);
+                        }
+                    } else if (result.correctResults.contains(mesh)) {
+                        o.missingPrediction++;
+                    } else {
+                        o.wrongPrediction++;
+                    }
+                }
+            }
+        }
+
+        MeSHEvaluationResult[] finalResult = new MeSHEvaluationResult[evaluationResult.size()];
+        for (int i = 0; i < finalResult.length; i++) {
+            finalResult[i] = evaluationResult.get(meshes.get(i));
+        }
+
+        Arrays.sort(finalResult);
+
+        StringBuilder content = new StringBuilder();
+
+        content.append("MeSH,Document Count,Correct Prediction,Wrong Prediction,Missing Prediction,Correct Percentage,Wrong Percentage,Impact ((%Wrong + %Missing) * Document Count)");
+        for (int i = 0; i < finalResult.length; i++) {
+            MeSHEvaluationResult r = finalResult[i];
+            content.append(String.format("\r\n%s,%d,%d,%d,%d,%.1f,%.1f,%.3f", r.mesh.replace(",", ";;"), r.documentCount, r.correctPrediction, r.wrongPrediction, r.missingPrediction, r.getCorrectPercentage(), r.getWrongPercentage(), r.getImpact()));
+        }
+
+        FileUtils.writeText(reportFolder + "MeSH Classification Accuracy.csv", content.toString());
+
+        content = new StringBuilder();
+        for (String mesh : unseenMeshes) {
+            content.append(mesh);
+            content.append("\r\n");
+        }
+
+        FileUtils.writeText(reportFolder + "Unseen MeSH List.txt", content.toString());
+    }
+
+    private ArrayList<String> getIntersection(ArrayList<String> list_1, ArrayList<String> list_2) {
+        ArrayList<String> result = new ArrayList<>();
+
+        for (String predicted : list_1) {
+            if (list_2.contains(predicted)) {
+                result.add(predicted);
+            }
+        }
+
+        return result;
+    }
+
+    private ArrayList<String> loadMeshList() {
+        ArrayList<String> result = new ArrayList<>();
+
+        String[] lines = FileUtils.readAllLines(MeSHTermInDocumentTextClassifierTrainerTask.getMeSHListFilePath());
+        for (int i = 0; i < lines.length; i++) {
+            String mesh = lines[i];
+
+            mesh = mesh.replace("COMMMMA", ",");
+            result.add(mesh);
+        }
+
+        return result;
+    }
+
+    @NotNull
+    private String createReportFolder(ClassifierParameter parameter) {
+        String reportFolder = Constants.REPORTS_FOLDER + parameter.toString() + Constants.BACK_SLASH + predictor.getReportFolderName() + Constants.BACK_SLASH;
+        if (!FileUtils.exists(reportFolder)) {
+            FileUtils.createDirectory(reportFolder);
+        }
+        return reportFolder;
+    }
+
+    @NotNull
+    private ArrayList<DocumentEvaluationResult> mergeEvaluationResults(ArrayList<ISubTaskThread> threads) {
         ArrayList<DocumentEvaluationResult> results = new ArrayList<>();
         for (int i = 0; i < threads.size(); i++) {
             EvaluationThread t = (EvaluationThread) threads.get(i);
             results.addAll(t.results);
         }
-
-        String reportFolder = Constants.REPORTS_FOLDER + parameter.toString() + Constants.BACK_SLASH + predictor.getReportFolderName() + Constants.BACK_SLASH;
-        if (!FileUtils.exists(reportFolder)) {
-            FileUtils.createDirectory(reportFolder);
-        }
-
-        saveCSVReport(results, reportFolder, listener);
+        return results;
     }
 
-    private void saveCSVReport(ArrayList<DocumentEvaluationResult> results, String folder, ITaskListener listener) {
+    private void saveClassificationReport(ArrayList<DocumentEvaluationResult> results, String folder, ITaskListener listener) {
         StringBuilder result = new StringBuilder();
         result.append("Document Identifier,Precision,Recall,F1 Score");
 
@@ -139,17 +343,14 @@ public class EvaluationTask extends BaseTask {
     }
 
     private boolean existsCacheFile(String modelHash) {
-        String folder = Constants.TEMP_FOLDER + "Caches" + Constants.BACK_SLASH;
-        if (!FileUtils.exists(folder)) {
-            FileUtils.createDirectory(folder);
-        }
+        String folder = createReportFolder(parameter);
 
         String path = getCacheFilePath(modelHash);
         return FileUtils.exists(path);
     }
 
     private String getCacheFilePath(String modelHash) {
-        String folder = Constants.TEMP_FOLDER + "Caches" + Constants.BACK_SLASH;
+        String folder = Constants.REPORTS_FOLDER + parameter.toString() + Constants.BACK_SLASH;
         StringBuilder fileName = new StringBuilder();
         for (int i = 0; i < modelHash.length(); i++) {
             char c = modelHash.charAt(i);
@@ -157,7 +358,7 @@ public class EvaluationTask extends BaseTask {
                 fileName.append(c);
             }
         }
-        return folder + fileName + ".txt";
+        return folder + "Document Classification Cache [" + fileName + "].txt";
     }
 
     private Hashtable<String, ArrayList<String>> getClusterMaps(ArrayList<ISubTaskThread> threads) {
@@ -287,11 +488,14 @@ class EvaluationThread extends Thread implements ISubTaskThread {
     public ArrayList<DocumentEvaluationResult> results = new ArrayList<>();
     public IMeshPredictor predictor = null;
     public int neiborsToConsider = 5;
+    public ArrayList<String> seenCandidates = new ArrayList<>();
+
+    private int documentCount = 100;
 
     @Override
     public void run() {
-//        for (int i = 0; i < 100; i++) {
-        for (int i = 0; i < documents.size(); i++) {
+        documentCount = 20; // documents.size();
+        for (int i = 0; i < documentCount; i++) {
             updateProgress(i);
 
             DocumentFeatureSet document = documents.get(i);
@@ -300,11 +504,16 @@ class EvaluationThread extends Thread implements ISubTaskThread {
             ArrayList<ClassificationCluster> clusters = getClassificationClusters(vector);
             cacheClusterMap(vector, clusters);
 
-            ArrayList<String> predictions = new ArrayList<>();
+            ArrayList<String> candidates = new ArrayList<>();
             for (ClassificationCluster cluster : clusters) {
-                ArrayList<String> predictedMesh = predictor.predict(document, cluster);
-                predictions.addAll(predictedMesh);
+                for (ClassificationClusterMeSH m : cluster.meshes) {
+                    candidates.add(m.mesh);
+                }
             }
+
+            candidates = removeDuplicates(candidates);
+            seenCandidates.addAll(candidates);
+            ArrayList<String> predictions = predictor.predict(document, candidates);
 
             predictions = removeDuplicates(predictions);
 
@@ -316,7 +525,9 @@ class EvaluationThread extends Thread implements ISubTaskThread {
             if (predictions.size() != 0) {
                 result.precision = correctPredictions.size() * 1.0 / predictions.size();
                 result.recall = correctPredictions.size() * 1.0 / correctMesh.size();
-                result.f1 = 2 * (result.precision * result.recall) / (result.precision + result.recall);
+                if (result.precision > 0 && result.recall > 0) {
+                    result.f1 = 2 * (result.precision * result.recall) / (result.precision + result.recall);
+                }
             }
 
             result.correctResults = correctMesh;
@@ -326,10 +537,12 @@ class EvaluationThread extends Thread implements ISubTaskThread {
             results.add(result);
         }
 
+        seenCandidates = removeDuplicates(seenCandidates);
+
         finished = true;
     }
 
-    private ArrayList<String> removeDuplicates(ArrayList<String> predictions) {
+    public static ArrayList<String> removeDuplicates(ArrayList<String> predictions) {
         ArrayList<String> result = new ArrayList<>();
 
         for (String mesh : predictions) {
@@ -401,7 +614,7 @@ class EvaluationThread extends Thread implements ISubTaskThread {
     }
 
     private void updateProgress(int i) {
-        progress = i * 100.0 / documents.size();
+        progress = i * 100.0 / documentCount;
     }
 
     @Override
@@ -432,5 +645,44 @@ class ClusterSimilarityPair implements Comparable<ClusterSimilarityPair> {
     @Override
     public int compareTo(@NotNull ClusterSimilarityPair o) {
         return new Double(o.similarity).compareTo(similarity);
+    }
+}
+
+class MeSHEvaluationResult implements Comparable<MeSHEvaluationResult>{
+    public String mesh = "";
+    public int documentCount = 0;
+    public int correctPrediction = 0;
+    public int wrongPrediction = 0;
+    public int missingPrediction = 0;
+
+    public double getCorrectPercentage() {
+        if (documentCount == 0)
+            return 0;
+
+        return correctPrediction * 100.0 / documentCount;
+    }
+
+    public double getWrongPercentage() {
+        if (documentCount == 0)
+            return 0;
+
+        return wrongPrediction * 100.0 / documentCount;
+    }
+
+    public double getMissingPercentage() {
+        if (documentCount == 0)
+            return 0;
+
+        return missingPrediction * 100.0 / documentCount;
+    }
+
+    public double getImpact() {
+        double a = (getWrongPercentage() + getMissingPercentage()) * documentCount;
+        return a;
+    }
+
+    @Override
+    public int compareTo(@NotNull MeSHEvaluationResult o) {
+        return new Double(o.getImpact()).compareTo(getImpact());
     }
 }

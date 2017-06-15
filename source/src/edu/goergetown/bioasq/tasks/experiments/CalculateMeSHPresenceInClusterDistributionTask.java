@@ -24,9 +24,9 @@ public class CalculateMeSHPresenceInClusterDistributionTask extends BaseTask {
     @Override
     public void process(ITaskListener listener) {
         ClassifierParameter parameter = new ClassifierParameter();
-        parameter.termExtractionMethod = "bm25f";
+        parameter.termExtractionMethod = "quick-umls";
         parameter.clusteringMethod = "adaptive";
-        parameter.clusteringParameter = "0.17";
+        parameter.clusteringParameter = "0.13";
 
         ArrayList<Cluster> clusters = MeSHClassificationModelBase.loadClusters(listener, parameter);
         listener.log("Clusters loaded");

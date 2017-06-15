@@ -12,6 +12,7 @@ import edu.goergetown.bioasq.core.task.BaseTask;
 import edu.goergetown.bioasq.core.task.SubTaskInfo;
 import edu.goergetown.bioasq.ui.ITaskListener;
 import edu.goergetown.bioasq.utils.BinaryBuffer;
+import edu.goergetown.bioasq.utils.ClusteringUtils;
 import edu.goergetown.bioasq.utils.DocumentListUtils;
 import edu.goergetown.bioasq.utils.FileUtils;
 
@@ -70,17 +71,19 @@ public class HierarchicalAgglomerativeClusteringTask extends BaseTask {
                 int year = years.get(yearIndex);
                 for (int core = 0; core < Constants.CORE_COUNT; core++) {
                     String pathToDocuments = Constants.POS_DATA_FOLDER_BY_YEAR + year + "-" + core + ".bin";
-                    Document.iterateOnDocumentListFile(pathToDocuments, new IDocumentLoaderCallback() {
-                        @Override
-                        public void processDocument(Document document, int i, int totalDocumentCount) {
-                            count[0]++;
-                            if (count[0] % 1000 == 0) {
-                                updateProgress(listener, LOADING_DOCUMENT, count[0], total);
-                            }
+                    if (FileUtils.exists(pathToDocuments)) {
+                        Document.iterateOnDocumentListFile(pathToDocuments, new IDocumentLoaderCallback() {
+                            @Override
+                            public void processDocument(Document document, int i, int totalDocumentCount) {
+                                count[0]++;
+                                if (count[0] % 1000 == 0) {
+                                    updateProgress(listener, LOADING_DOCUMENT, count[0], total);
+                                }
 
-                            result.add(createMeSHVector(document));
-                        }
-                    });
+                                result.add(ClusteringUtils.createMeSHVector(document));
+                            }
+                        });
+                    }
                 }
             }
 
@@ -102,25 +105,6 @@ public class HierarchicalAgglomerativeClusteringTask extends BaseTask {
         }
 
         return result;
-    }
-
-    private Vector createMeSHVector(Document document) {
-        Vector result = new Vector();
-        result.identifier = String.format("year: %s; pmid: %s", String.valueOf(document.metadata.get("year")), document.identifier);
-
-        for (String mesh : document.categories) {
-            if (!isCheckTagMeSH(mesh)) {
-                double probability = MeSHProbabilityDistribution.getProbability(mesh);
-
-                result.addWeight(mesh, probability);
-            }
-        }
-
-        result.optimize();
-        result.setLength(1.0);
-
-        return result;
-
     }
 
     private boolean isCheckTagMeSH(String mesh) {

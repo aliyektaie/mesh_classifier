@@ -3,6 +3,7 @@ package edu.goergetown.bioasq.ui;
 import edu.goergetown.bioasq.Constants;
 import edu.goergetown.bioasq.core.task.ITask;
 import edu.goergetown.bioasq.tasks.evaluation.*;
+import edu.goergetown.bioasq.tasks.experiments.*;
 import edu.goergetown.bioasq.tasks.preprocess.*;
 import edu.goergetown.bioasq.tasks.train.*;
 import edu.goergetown.bioasq.utils.FileUtils;
@@ -23,20 +24,20 @@ public class MainWindow implements ITaskListener {
     private void initTasks() {
         tasks.add(new ExtractDatasetOnPaperYearTask());
         tasks.add(new CreateDatasetMergeTask());
-        tasks.add(new PartOfSpeechTaggerTask());
         tasks.add(new CreateMeSHProbabilityDistributionTask());
         tasks.add(new ClusterMeSHesTask());
         tasks.add(new HierarchicalAgglomerativeClusteringTask());
         tasks.add(new CreateClassifierModelFileTask());
-//        tasks.add(new MeSHLabelTermOccurrenceInDocumentTask());
-//        tasks.add(new CalculateOveralScoreTask());
-//        tasks.add(new CalculateMeSHPresenceInClusterDistributionTask());
-//        tasks.add(new MeSHTermInDocumentTextClassifierTrainerTask());
-        tasks.add(new CreateMachineLearningTrainingFilesTask());
-        tasks.add(new EvaluationTask());
-        tasks.add(new MachineLearningClassifierTrainerTask());
-        tasks.add(new AdaptiveMeSHListClustererTask());
+        tasks.add(new MeSHLabelTermOccurrenceInDocumentTask());
+        tasks.add(new CalculateOveralScoreTask());
+        tasks.add(new CalculateMeSHPresenceInClusterDistributionTask());
+        tasks.add(new MeSHTermInDocumentTextClassifierTrainerTask());
         tasks.add(new DocumentFeatureExtractorTask());
+        tasks.add(new PartOfSpeechTaggerTask());
+        tasks.add(new AdaptiveMeSHListClustererTask());
+        tasks.add(new CreateMachineLearningTrainingFilesTask());
+        tasks.add(new MachineLearningClassifierTrainerTask());
+        tasks.add(new EvaluationTask());
     }
 
     private static final Font FONT = new Font("Noto Sans", Font.PLAIN, c(12));

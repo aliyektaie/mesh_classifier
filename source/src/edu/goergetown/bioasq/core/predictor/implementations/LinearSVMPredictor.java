@@ -10,6 +10,7 @@ import edu.goergetown.bioasq.core.model.classification.ClassificationCluster;
 import edu.goergetown.bioasq.core.model.classification.ClassificationClusterMeSH;
 import edu.goergetown.bioasq.core.model.mesh.MeSHUtils;
 import edu.goergetown.bioasq.core.predictor.IMeshPredictor;
+import edu.goergetown.bioasq.ui.ITaskListener;
 import edu.goergetown.bioasq.utils.FileUtils;
 
 import java.util.ArrayList;
@@ -27,11 +28,15 @@ public class LinearSVMPredictor implements IMeshPredictor {
     }
 
     @Override
-    public ArrayList<String> predict(DocumentFeatureSet document, ClassificationCluster cluster) {
-        String[] clusterMeshes = getStringList(cluster.meshes);
+    public void initialize(ITaskListener listener) {
+
+    }
+
+    @Override
+    public ArrayList<String> predict(DocumentFeatureSet document, ArrayList<String> candidates) {
         ArrayList<String> result = new ArrayList<>();
 
-        for (String mesh : clusterMeshes) {
+        for (String mesh : candidates) {
             if (hasMesh(document, mesh)) {
                 result.add(mesh);
             }

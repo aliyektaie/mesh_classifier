@@ -25,9 +25,7 @@ public class Document {
     private static MaxentTagger tagger = null;
 
     static {
-        try {
-//            tagger = new MaxentTagger(Constants.STANFORD_POS_MODEL_FILE_PATH);
-        } catch (Exception ex) { }
+//        tagger = new MaxentTagger(Constants.STANFORD_POS_MODEL_FILE_PATH);
     }
 
     @Override
@@ -38,7 +36,7 @@ public class Document {
         result.append("\nTitle: \"" + title.toString(false) + "\"");
         result.append("\nText:");
         String del = "";
-        for (Sentence s : text){
+        for (Sentence s : text) {
             result.append(del);
             del = "\n";
             result.append("\n    \"" + s.toString(false) + "\"");
@@ -140,18 +138,18 @@ public class Document {
         buffer.append(identifier);
         buffer.append(title.serialize());
 
-        buffer.append((byte)text.size());
+        buffer.append((byte) text.size());
         for (Sentence sentence : text) {
             buffer.append(sentence.serialize());
         }
 
-        buffer.append((byte)metadata.size());
+        buffer.append((byte) metadata.size());
         for (String key : metadata.keySet()) {
             buffer.append(key);
             buffer.append(metadata.get(key));
         }
 
-        buffer.append((byte)categories.size());
+        buffer.append((byte) categories.size());
         for (String category : categories) {
             buffer.append(category);
         }

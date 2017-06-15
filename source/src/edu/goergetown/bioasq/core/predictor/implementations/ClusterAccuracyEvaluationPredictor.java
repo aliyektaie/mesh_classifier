@@ -5,6 +5,7 @@ import edu.goergetown.bioasq.core.model.classification.ClassificationCluster;
 import edu.goergetown.bioasq.core.model.classification.ClassificationClusterMeSH;
 import edu.goergetown.bioasq.core.model.mesh.MeSHUtils;
 import edu.goergetown.bioasq.core.predictor.IMeshPredictor;
+import edu.goergetown.bioasq.ui.ITaskListener;
 
 import java.util.ArrayList;
 
@@ -19,11 +20,13 @@ public class ClusterAccuracyEvaluationPredictor implements IMeshPredictor {
     }
 
     @Override
-    public ArrayList<String> predict(DocumentFeatureSet document, ClassificationCluster cluster) {
-        String[] clusterMeshes = getStringList(cluster.meshes);
-        ArrayList<String> result = getIntersection(clusterMeshes, document.meshList);
-        ArrayList<String> removedTags = getIntersection(tags, document.meshList);
-        result.addAll(removedTags);
+    public void initialize(ITaskListener listener) {
+
+    }
+
+    @Override
+    public ArrayList<String> predict(DocumentFeatureSet document, ArrayList<String> candidates) {
+        ArrayList<String> result = getIntersection(candidates, document.meshList);
 
         return result;
     }

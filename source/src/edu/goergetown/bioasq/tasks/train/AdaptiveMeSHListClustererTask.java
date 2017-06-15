@@ -3,7 +3,6 @@ package edu.goergetown.bioasq.tasks.train;
 import edu.goergetown.bioasq.Constants;
 import edu.goergetown.bioasq.core.document.Document;
 import edu.goergetown.bioasq.core.document.IDocumentLoaderCallback;
-import edu.goergetown.bioasq.core.mesh.MeSHProbabilityDistribution;
 import edu.goergetown.bioasq.core.model.Cluster;
 import edu.goergetown.bioasq.core.model.Vector;
 import edu.goergetown.bioasq.core.model.mesh.MeSHUtils;
@@ -12,8 +11,10 @@ import edu.goergetown.bioasq.core.task.BaseTask;
 import edu.goergetown.bioasq.core.task.ISubTaskThread;
 import edu.goergetown.bioasq.core.task.SubTaskInfo;
 import edu.goergetown.bioasq.ui.ITaskListener;
+import edu.goergetown.bioasq.utils.ClusteringUtils;
 import edu.goergetown.bioasq.utils.DocumentListUtils;
 import edu.goergetown.bioasq.utils.FileUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -24,11 +25,11 @@ import java.util.Hashtable;
 public class AdaptiveMeSHListClustererTask extends BaseTask {
     private final int SIMILARITY_TYPE = Vector.SIMILARITY_COSINE;
     private double ADD_SUBSET_OF_DATA_SET_IN_ITERATION = 0.01;
-    private double CLUSTERING_SIMILARITY_THRESHOLD = 0.17;
+    private double CLUSTERING_SIMILARITY_THRESHOLD = 0.03;
 
     private SubTaskInfo LOADING_DOCUMENT = new SubTaskInfo("Loading documents", 1);
     private SubTaskInfo CLUSTER_TASK = new SubTaskInfo("Adaptive Clustering Task", 100);
-    private SubTaskInfo MERGE_CLUSTER_TASK = new SubTaskInfo("Merging clusters", 1);
+    private SubTaskInfo MERGE_CLUSTER_TASK = new SubTaskInfo("Updating cluster centroids", 1);
 
     @Override
     public void process(ITaskListener listener) {
@@ -43,28 +44,25 @@ public class AdaptiveMeSHListClustererTask extends BaseTask {
 
             showProgress(listener, state);
 
-            ArrayList<ISubTaskThread> workerThreads = createWorkerThreads(state, threadCount);
+            ArrayList<ISubTaskThread> workerThreads = createWorkerThreads(state, threadCount, listener);
             CLUSTER_TASK.title = "Clustering Iteration: " + state.iteration;
             executeWorkerThreads(listener, CLUSTER_TASK, workerThreads);
+            listener.log("Clustering threads finished");
             state.clusters = mergeThreadClusters(listener, workerThreads, state.clusters);
+            listener.log("Clustering threads results merged");
 
-            ArrayList<Cluster> clustersToBeRemoved = new ArrayList<>();
-            for (Cluster cluster : state.clusters) {
-                if (cluster.vectors.size() == 0 || cluster.vectors.size() > (state.vectors.size() * 10.0 / state.clusters.size())) {
-                    clustersToBeRemoved.add(cluster);
-                    state.clustersChanged = true;
-                } else {
-                    cluster.updateCentroid();
-                }
-            }
+            ArrayList<Cluster> clustersToBeRemoved = processClustersAfterIteration(listener, state);
 
             if (clustersToBeRemoved.size() > 0) {
                 state.clusters.removeAll(clustersToBeRemoved);
             }
 
+            listener.setCurrentState("Saving clusters");
+            listener.log("Saving clusters");
             String path = createOutputFolder(state.iteration) + "clusters.bin";
             Cluster.saveClusters(path, state.clusters);
 
+            listener.log("Creating iteration report");
             listener.setCurrentState(String.format("Processing clusters for iteration report, iteration %d [Documents: %d] [Clusters: %d]", state.iteration, state.vectors.size(), state.clusters.size()));
             printClusterReports(listener, state.clusters, state.iteration, 0, clustersToBeRemoved.size());
 
@@ -73,6 +71,36 @@ public class AdaptiveMeSHListClustererTask extends BaseTask {
             }
         }
 
+    }
+
+    @NotNull
+    private ArrayList<Cluster> processClustersAfterIteration(ITaskListener listener, AdaptiveClustererState state) {
+        ArrayList<ISubTaskThread> threads = new ArrayList<>();
+        for (int i = 0; i < Constants.CORE_COUNT; i++) {
+            ClusterProcessorAfterIterationThread t = new ClusterProcessorAfterIterationThread();
+            t.clusters = new ArrayList<>();
+            for (int j = i; j < state.clusters.size(); j += Constants.CORE_COUNT) {
+                t.clusters.add(state.clusters.get(j));
+            }
+
+            t.keepThreshold = (int) (state.vectors.size() * 10.0 / state.clusters.size());
+
+            threads.add(t);
+        }
+
+        executeWorkerThreads(listener, MERGE_CLUSTER_TASK, threads);
+        state.clusters = new ArrayList<>();
+        ArrayList<Cluster> clustersToBeRemoved = new ArrayList<>();
+        state.clustersChanged = false;
+
+        for (int i = 0; i < Constants.CORE_COUNT; i++) {
+            ClusterProcessorAfterIterationThread t = (ClusterProcessorAfterIterationThread) threads.get(i);
+            state.clusters.addAll(t.clustersToKeep);
+            clustersToBeRemoved.addAll(t.clustersToBeRemoved);
+            state.clustersChanged = state.clustersChanged || t.clustersChanged;
+        }
+
+        return clustersToBeRemoved;
     }
 
     private ArrayList<Cluster> mergeThreadClusters(ITaskListener listener, ArrayList<ISubTaskThread> workerThreads, ArrayList<Cluster> clusters) {
@@ -92,46 +120,9 @@ public class AdaptiveMeSHListClustererTask extends BaseTask {
         }
 
         return result;
-//        ArrayList<ArrayList<Cluster>> clustersList = new ArrayList<>();
-//        for (int i = 0; i < workerThreads.size(); i++) {
-//            clustersList.add(((AdaptiveClusteringThread) workerThreads.get(i)).newClusters);
-//        }
-//
-//        while (clustersList.size() > 1) {
-//            ArrayList<ISubTaskThread> threads = new ArrayList<>();
-//            for (int i = 0; i < clustersList.size() / 2; i++) {
-//                ClusterMergerThread t = new ClusterMergerThread();
-//                t.list1 = clustersList.get(i * 2);
-//                t.list2 = clustersList.get(i * 2 + 1);
-//                t.similarityThreshold = CLUSTERING_SIMILARITY_THRESHOLD;
-//                t.similarityType = SIMILARITY_TYPE;
-//
-//                threads.add(t);
-//            }
-//
-//            executeWorkerThreads(listener, MERGE_CLUSTER_TASK, threads);
-//            clustersList.clear();
-//
-//            for (ISubTaskThread thread : threads) {
-//                clustersList.add(((ClusterMergerThread) thread).result);
-//            }
-//        }
-//
-//        ArrayList<ISubTaskThread> threads = new ArrayList<>();
-//        ClusterMergerThread thread = new ClusterMergerThread();
-//        thread.list1 = clustersList.get(0);
-//        thread.list2 = ((AdaptiveClusteringThread)workerThreads.get(0)).clusters;
-//        thread.similarityThreshold = CLUSTERING_SIMILARITY_THRESHOLD;
-//        thread.similarityType = SIMILARITY_TYPE;
-//
-//        threads.add(thread);
-//
-//        executeWorkerThreads(listener, MERGE_CLUSTER_TASK, threads);
-//
-//        return thread.result;
     }
 
-    private ArrayList<ISubTaskThread> createWorkerThreads(AdaptiveClustererState state, int threadCount) {
+    private ArrayList<ISubTaskThread> createWorkerThreads(AdaptiveClustererState state, int threadCount, ITaskListener listener) {
         ArrayList<ISubTaskThread> result = new ArrayList<>();
         ArrayList<ArrayList<Vector>> vectors = new ArrayList<>();
         for (int i = 0; i < threadCount; i++) {
@@ -150,6 +141,8 @@ public class AdaptiveMeSHListClustererTask extends BaseTask {
             t.similarityType = SIMILARITY_TYPE;
             t.state = state;
             t.clusters = cloneClusters(state.clusters);
+            t.printClustersCount = threadCount == 1;
+            t.listener = listener;
 
             result.add(t);
         }
@@ -178,7 +171,7 @@ public class AdaptiveMeSHListClustererTask extends BaseTask {
         state.vectors = loadDocuments(listener);
 
         int count = 0;
-        while (FileUtils.exists(createOutputFolder(count+1, false) + "clusters.bin")) {
+        while (FileUtils.exists(createOutputFolder(count + 1, false) + "clusters.bin")) {
             count++;
         }
 
@@ -218,7 +211,7 @@ public class AdaptiveMeSHListClustererTask extends BaseTask {
         double similarityAverage = 0;
         double distributionAverage = 0;
 
-        Vector averageCluster = calculateAverageCluster(clusters);
+        Vector averageCluster = calculateAverageCluster(clusters, listener);
 
         for (int i = 0; i < clusters.size(); i++) {
             if (i % 20 == 0) {
@@ -263,10 +256,18 @@ public class AdaptiveMeSHListClustererTask extends BaseTask {
         listener.saveLogs(path);
     }
 
-    private Vector calculateAverageCluster(ArrayList<Cluster> clusters) {
+    private Vector calculateAverageCluster(ArrayList<Cluster> clusters, ITaskListener listener) {
         Vector result = new Vector();
+        int i = 0;
+        listener.log("Calculating average vector");
+        listener.setCurrentState("Calculating average vector");
 
         for (Cluster cluster : clusters) {
+            i++;
+
+            if (i % 10 == 0)
+                listener.setProgress(i, clusters.size());
+
             result = result.add(cluster.centroid);
             result.optimize();
         }
@@ -309,7 +310,7 @@ public class AdaptiveMeSHListClustererTask extends BaseTask {
                                 updateProgress(listener, LOADING_DOCUMENT, count[0], total);
                             }
 
-                            result.add(createMeSHVector(document));
+                            result.add(ClusteringUtils.createMeSHVector(document));
                         }
                     });
                 }
@@ -334,30 +335,6 @@ public class AdaptiveMeSHListClustererTask extends BaseTask {
 
         return result;
     }
-
-    private Vector createMeSHVector(Document document) {
-        Vector result = new Vector();
-        result.identifier = String.format("year: %s; pmid: %s", String.valueOf(document.metadata.get("year")), document.identifier);
-
-        for (String mesh : document.categories) {
-            if (!isCheckTagMeSH(mesh)) {
-                double probability = 1 - MeSHProbabilityDistribution.getProbability(mesh);
-
-                result.addWeight(mesh, probability);
-            }
-        }
-
-        result.optimize();
-        result.setLength(1.0);
-
-        return result;
-
-    }
-
-    private boolean isCheckTagMeSH(String mesh) {
-        return MeSHUtils.getCheckTagsMeSH().contains(mesh);
-    }
-
 
     @Override
     protected String getTaskClass() {
@@ -385,10 +362,10 @@ public class AdaptiveMeSHListClustererTask extends BaseTask {
         ArrayList<Object> thresholdCandidates = new ArrayList<>();
 
         thresholdCandidates.add(new AdaptiveClusteringParameter(0.13));
-        thresholdCandidates.add(new AdaptiveClusteringParameter(0.15));
         thresholdCandidates.add(new AdaptiveClusteringParameter(0.17));
-        thresholdCandidates.add(new AdaptiveClusteringParameter(0.2));
-        thresholdCandidates.add(new AdaptiveClusteringParameter(0.28));
+        thresholdCandidates.add(new AdaptiveClusteringParameter(0.21));
+        thresholdCandidates.add(new AdaptiveClusteringParameter(0.24));
+        thresholdCandidates.add(new AdaptiveClusteringParameter(0.27));
 
         Hashtable<String, ArrayList<Object>> result = new Hashtable<>();
         result.put("threshold", thresholdCandidates);
@@ -398,7 +375,7 @@ public class AdaptiveMeSHListClustererTask extends BaseTask {
 
     @Override
     public void setParameter(String name, Object value) {
-        if (value!= null) {
+        if (value != null) {
             CLUSTERING_SIMILARITY_THRESHOLD = ((AdaptiveClusteringParameter) value).threshold;
         }
     }
@@ -439,12 +416,22 @@ class AdaptiveClusteringThread extends Thread implements ISubTaskThread {
     public ArrayList<Cluster> clusters = null;
     public AdaptiveClustererState state = null;
     public ArrayList<Cluster> newClusters = new ArrayList<>();
+    public boolean printClustersCount = false;
+    public ITaskListener listener = null;
 
     @Override
     public void run() {
         int count = vectorsList.size();
+
+        if (printClustersCount) {
+            listener.log("First iteration, cluster count details:");
+        }
+
         for (int i = 0; i < count; i++) {
             progress = i * 100.0 / count;
+            if (i % 1000 == 0 && printClustersCount) {
+                listener.log("   -> " + clusters.size());
+            }
 
             Vector vector = vectorsList.get(vectorsList.size() - i - 1);
             Cluster cluster = getClusterForVector(clusters, vector);
@@ -560,4 +547,42 @@ class AdaptiveClustererState {
     public ArrayList<Cluster> clusters = null;
     public boolean clustersChanged = false;
     public int iteration = 0;
+}
+
+class ClusterProcessorAfterIterationThread extends Thread implements ISubTaskThread {
+    private boolean finished = false;
+    private double progress = 0;
+    public ArrayList<Cluster> clustersToBeRemoved = new ArrayList<>();
+    public ArrayList<Cluster> clustersToKeep = new ArrayList<>();
+    public ArrayList<Cluster> clusters = null;
+    public boolean clustersChanged = false;
+    public int keepThreshold = 0;
+
+    @Override
+    public void run() {
+        for (int i = 0; i < clusters.size(); i++) {
+            progress = i * 100.0 / clusters.size();
+            Cluster cluster = clusters.get(i);
+
+            if (cluster.vectors.size() == 0 || cluster.vectors.size() > keepThreshold) {
+                clustersToBeRemoved.add(cluster);
+                this.clustersChanged = true;
+            } else {
+                cluster.updateCentroid();
+                clustersToKeep.add(cluster);
+            }
+        }
+
+        finished = true;
+    }
+
+    @Override
+    public boolean isFinished() {
+        return finished;
+    }
+
+    @Override
+    public double getProgress() {
+        return progress;
+    }
 }

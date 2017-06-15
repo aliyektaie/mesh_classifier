@@ -36,7 +36,7 @@ public class SupportVectorMachineTrainer implements IMachineLearningTrainer {
     }
 
     @Override
-    public EvaluationOnTrainingDataResult train(double[][] input, double[][] output, int featureCount, String savePath) {
+    public EvaluationOnTrainingDataResult train(double[][] input, String[] vocabulary, double[][] output, int featureCount, String savePath) {
         boolean allSame = true;
         double first = output[0][0];
 

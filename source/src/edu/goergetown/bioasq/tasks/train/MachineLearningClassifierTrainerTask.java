@@ -20,14 +20,20 @@ import java.util.Random;
 public class MachineLearningClassifierTrainerTask extends BaseTask {
     private static IMachineLearningTrainer NEURAL_NETWORK_TRAINER = new NeuralNetworkTrainer();
     private static IMachineLearningTrainer SVM_TRAINER = new SupportVectorMachineTrainer();
+    private static IMachineLearningTrainer NB_TRAINER = new NaiveBayesTrainer();
+    private static IMachineLearningTrainer VS_TRAINER = new VectorSimilarityTrainer();
 
     private SubTaskInfo TRAINER_TASK = new SubTaskInfo("", 1000);
-    private IMachineLearningTrainer trainer = SVM_TRAINER;
+    private IMachineLearningTrainer trainer = NEURAL_NETWORK_TRAINER;
 
-    private String LIST_OF_INPUT_FILE_TO_TRAIN = "D:\\File 1 (Linear SVM).txt";
+    private String LIST_OF_INPUT_FILE_TO_TRAIN = "C:\\Users\\zghasemi\\Desktop\\Ali\\data\\Text Classifiers\\mesh-list-1.txt";
 
     @Override
     public void process(ITaskListener listener) {
+        String outFolder = Constants.TEXT_CLASSIFIER_FOLDER + trainer.getTitle();
+        if (!FileUtils.exists(outFolder))
+            FileUtils.createDirectory(outFolder);
+
         ArrayList<String> files = getTrainingFiles(listener);
         ArrayList<ISubTaskThread> threads = new ArrayList<>();
 
@@ -112,6 +118,8 @@ public class MachineLearningClassifierTrainerTask extends BaseTask {
         ArrayList<Object> trainers = new ArrayList<>();
         trainers.add(NEURAL_NETWORK_TRAINER);
         trainers.add(SVM_TRAINER);
+        trainers.add(NB_TRAINER);
+        trainers.add(VS_TRAINER);
         result.put("trainers", trainers);
 
         return result;
@@ -131,7 +139,7 @@ public class MachineLearningClassifierTrainerTask extends BaseTask {
 }
 
 class TrainerThread extends Thread implements ISubTaskThread {
-    private static final int SAMPLE_COUNT = 8000;
+    private static final int SAMPLE_COUNT = 800000;
     private static final int SAMPLE_COUNT_INCREASE = 4000;
     private boolean finished = false;
     private double progress = 0;
@@ -144,7 +152,8 @@ class TrainerThread extends Thread implements ISubTaskThread {
         for (int i = 0; i < files.size(); i++) {
             progress = i * 100.0 / files.size();
 
-            String[] fileContent = FileUtils.readAllLines(files.get(i));
+            String[] vocabulary = FileUtils.readAllLines(files.get(i).replace(".data", ".txt"));
+            String[] fileContent = convertSparceToMatrix(FileUtils.readAllLines(files.get(i)), vocabulary);
             int iteration = 0;
 
             while (iteration < 100 && (SAMPLE_COUNT + iteration * SAMPLE_COUNT_INCREASE) < fileContent.length || fileContent.length < SAMPLE_COUNT) {
@@ -160,7 +169,7 @@ class TrainerThread extends Thread implements ISubTaskThread {
                 mesh = mesh.replace(".data", "");
 
                 String savePath = Constants.TEXT_CLASSIFIER_FOLDER + trainer.getTitle() + Constants.BACK_SLASH + mesh + trainer.getFileExtension();
-                EvaluationOnTrainingDataResult trainResult = trainer.train(input, output, inputCount, savePath);
+                EvaluationOnTrainingDataResult trainResult = trainer.train(input, vocabulary, output, inputCount, savePath);
 
                 double accuracy = trainResult.correct;
                 accuracy = accuracy / (trainResult.correct + trainResult.wrong);
@@ -231,6 +240,36 @@ class TrainerThread extends Thread implements ISubTaskThread {
         }
 
         return null;
+    }
+
+    private String[] convertSparceToMatrix(String[] lines, String[] vocabulary) {
+        String[] result = new String[lines.length];
+
+        for (int i = 0; i < lines.length; i++) {
+            result[i] = convertSparceToMatrixLine(lines[i], vocabulary.length);
+        }
+
+        return result;
+    }
+
+    private String convertSparceToMatrixLine(String line, int length) {
+        StringBuilder result = new StringBuilder();
+        double[] content = new double[length];
+        String[] parts= line.split(" ");
+
+        for (int i = 0; i < parts.length - 1; i++) {
+            String[] a = parts[i].replace("(", "").replace(")", "").split(",");
+            content[Integer.valueOf(a[0])] = Double.valueOf(a[1]);
+        }
+
+        for (int i = 0; i < length; i++) {
+            result.append(content[i] == 0 ? "0" : String.format("%.5f", content[i]));
+            result.append(" ");
+        }
+
+        result.append(parts[parts.length - 1].trim());
+
+        return result.toString();
     }
 
     private int[] sampleIndex(String[] lines, int count, int required, String ending) {

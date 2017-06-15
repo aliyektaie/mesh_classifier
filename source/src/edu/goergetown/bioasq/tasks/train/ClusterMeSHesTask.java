@@ -9,6 +9,7 @@ import edu.goergetown.bioasq.core.model.implementation.KMeansClusterer;
 import edu.goergetown.bioasq.core.task.*;
 import edu.goergetown.bioasq.ui.ITaskListener;
 import edu.goergetown.bioasq.utils.BinaryBuffer;
+import edu.goergetown.bioasq.utils.ClusteringUtils;
 import edu.goergetown.bioasq.utils.DocumentListUtils;
 import edu.goergetown.bioasq.utils.FileUtils;
 
@@ -290,7 +291,7 @@ public class ClusterMeSHesTask extends BaseTask {
                                 updateProgress(listener, LOADING_DATA, count[0], total);
                             }
 
-                            result.add(createMeSHVector(document));
+                            result.add(ClusteringUtils.createMeSHVector(document));
                         }
                     });
                 }
@@ -316,26 +317,7 @@ public class ClusterMeSHesTask extends BaseTask {
         return result;
     }
 
-    private Vector createMeSHVector(Document document) {
-        Vector result = new Vector();
-        result.identifier = String.format("year: %s; pmid: %s", String.valueOf(document.metadata.get("year")), document.identifier);
 
-        double p_min = MeSHProbabilityDistribution.getMinimumProbability();
-        double p_max = MeSHProbabilityDistribution.getMaximumProbability();
-        double scale_min = 0.01;
-
-        for (String mesh : document.categories) {
-            double probability = MeSHProbabilityDistribution.getProbability(mesh);
-            probability = scale_min + (1 - scale_min) * ((probability - p_min) / (p_max - p_min));
-
-            result.addWeight(mesh, 1.0 - probability);
-        }
-
-        result.optimize();
-
-        return result;
-
-    }
 
     private void saveMeSHVectorFiles(ArrayList<Vector> result, String path) {
         ArrayList<byte[]> data = new ArrayList<>();

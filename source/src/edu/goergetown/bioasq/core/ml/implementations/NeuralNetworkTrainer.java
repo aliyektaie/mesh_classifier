@@ -24,7 +24,7 @@ public class NeuralNetworkTrainer implements IMachineLearningTrainer {
     }
 
     @Override
-    public EvaluationOnTrainingDataResult train(double[][] inputs, double[][] outputs, int featureCount, String savePath) {
+    public EvaluationOnTrainingDataResult train(double[][] inputs, String[] vocabulary, double[][] outputs, int featureCount, String savePath) {
         MultiLayerPerceptron neuralNetwork = new MultiLayerPerceptron(TransferFunctionType.SIGMOID, featureCount, 20, 1);
 
         DataSet trainingSet = new DataSet(featureCount, 1);

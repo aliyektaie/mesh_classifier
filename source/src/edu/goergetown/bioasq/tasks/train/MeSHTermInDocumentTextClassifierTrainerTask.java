@@ -30,7 +30,7 @@ public class MeSHTermInDocumentTextClassifierTrainerTask extends BaseTask {
     private String featureMethod = null;
 
     public MeSHTermInDocumentTextClassifierTrainerTask() {
-        featureMethod = "bm25f";
+        featureMethod = "quick-umls";
     }
 
     @Override

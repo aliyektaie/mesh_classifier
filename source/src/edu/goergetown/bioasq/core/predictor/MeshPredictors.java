@@ -1,8 +1,6 @@
 package edu.goergetown.bioasq.core.predictor;
 
-import edu.goergetown.bioasq.core.predictor.implementations.ClusterAccuracyEvaluationPredictor;
-import edu.goergetown.bioasq.core.predictor.implementations.LinearSVMPredictor;
-import edu.goergetown.bioasq.core.predictor.implementations.NeuralNetworkPredictor;
+import edu.goergetown.bioasq.core.predictor.implementations.*;
 
 import java.util.ArrayList;
 
@@ -17,7 +15,9 @@ public class MeshPredictors {
 
         predictors.add(new ClusterAccuracyEvaluationPredictor());
         predictors.add(new NeuralNetworkPredictor());
-//        predictors.add(new LinearSVMPredictor());
+        predictors.add(new NaiveBayesPredictor());
+        predictors.add(new LinearSVMPredictor());
+        predictors.add(new VectorSimilarityPredictor());
     }
 
     public static ArrayList<IMeshPredictor> getPredictors() {

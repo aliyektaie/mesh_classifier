@@ -19,8 +19,8 @@ import java.util.Hashtable;
 public class PartOfSpeechTaggerTask extends BaseTask {
     private SubTaskInfo LOADER_TASK = new SubTaskInfo("Loading BioASQ entries", 1);
     private SubTaskInfo TAGGER_TASK = new SubTaskInfo("Part of Speech Tagging entries", 935);
-    private int partToRun = 1;
-    private int totalPartCount = 2;
+    private int partToRun = 0;
+    private int totalPartCount = 4;
 
     @Override
     public void process(ITaskListener listener) {
